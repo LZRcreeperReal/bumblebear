@@ -1,667 +1,689 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BumbleBear — East Northport, NY</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Satisfy&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Satisfy&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            pink: { brand: '#f089c4', light: '#f9c4e1', soft: '#fde8f3', deep: '#d95fa3' },
-            cream: '#fff8fc',
+            pink: { brand:'#f089c4', light:'#f9c4e1', soft:'#fde8f3', deep:'#d95fa3' },
+            cream:'#fff8fc'
           },
           fontFamily: {
-            display: ['"Playfair Display"', 'serif'],
-            script: ['"Satisfy"', 'cursive'],
-            body: ['"DM Sans"', 'sans-serif'],
-          },
+            display:['"Playfair Display"','serif'],
+            script:['"Satisfy"','cursive'],
+            body:['"DM Sans"','sans-serif']
+          }
         }
       }
     };
   </script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: #fff8fc; color: #fff; overflow-x: hidden; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'DM Sans',sans-serif; background:#fff8fc; color:#fff; overflow-x:hidden; }
 
-    /* ── Noise overlay ──────────────────────────── */
-    .noise::before {
-      content: '';
-      position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: .35;
+    /* noise */
+    body::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity:.3;
     }
 
-    /* ── Blob ───────────────────────────────────── */
+    /* ── blob ── */
     .blob {
-      position: absolute;
-      border-radius: 60% 40% 70% 30% / 40% 50% 60% 50%;
-      filter: blur(48px);
-      animation: morph 10s ease-in-out infinite;
-      pointer-events: none;
+      position:absolute; border-radius:60% 40% 70% 30%/40% 50% 60% 50%;
+      filter:blur(48px); animation:morph 10s ease-in-out infinite; pointer-events:none;
     }
     @keyframes morph {
-      0%,100% { border-radius: 60% 40% 70% 30%/40% 50% 60% 50%; }
-      33%      { border-radius: 30% 70% 40% 60%/50% 30% 70% 40%; }
-      66%      { border-radius: 50% 50% 30% 70%/60% 40% 50% 60%; }
+      0%,100%{border-radius:60% 40% 70% 30%/40% 50% 60% 50%}
+      33%    {border-radius:30% 70% 40% 60%/50% 30% 70% 40%}
+      66%    {border-radius:50% 50% 30% 70%/60% 40% 50% 60%}
     }
 
-    /* ── Dot pattern ────────────────────────────── */
-    .dot-pattern {
-      background-image: radial-gradient(circle, rgba(255,255,255,.18) 1px, transparent 1px);
-      background-size: 22px 22px;
-    }
-    .dot-pattern-dark {
-      background-image: radial-gradient(circle, rgba(240,137,196,.2) 1px, transparent 1px);
-      background-size: 22px 22px;
+    /* ── dots ── */
+    .dot-pattern      { background-image:radial-gradient(circle,rgba(255,255,255,.18) 1px,transparent 1px); background-size:22px 22px; }
+    .dot-pattern-pink { background-image:radial-gradient(circle,rgba(240,137,196,.22) 1px,transparent 1px); background-size:20px 20px; }
+
+    /* ── stripes ── */
+    .stripes {
+      position:absolute; inset:0; pointer-events:none;
+      background-image:repeating-linear-gradient(-45deg,transparent 0,transparent 8px,rgba(255,255,255,.04) 8px,rgba(255,255,255,.04) 10px);
     }
 
-    /* ── TICKER TAPE ────────────────────────────── */
+    /* ── rings ── */
+    .ring { position:absolute; border-radius:50%; border:2px solid rgba(255,255,255,.14); pointer-events:none; }
+
+    /* ── TICKER ── */
     .ticker-wrap {
-      overflow: hidden;
-      background: linear-gradient(90deg, #d95fa3, #f089c4, #e070b8, #f089c4, #d95fa3);
-      background-size: 300% auto;
-      animation: tickerbg 6s linear infinite;
+      overflow:hidden;
+      background:linear-gradient(90deg,#d95fa3,#f089c4,#e070b8,#f089c4,#d95fa3);
+      background-size:300%; animation:tickerbg 6s linear infinite;
+      height:36px; display:flex; align-items:center;
     }
-    @keyframes tickerbg {
-      0%   { background-position: 0% }
-      100% { background-position: 300% }
-    }
+    @keyframes tickerbg { to{background-position:300%} }
     .ticker-track {
-      display: flex;
-      white-space: nowrap;
-      animation: ticker 22s linear infinite;
-      will-change: transform;
+      display:flex; white-space:nowrap;
+      animation:ticker 22s linear infinite; will-change:transform;
     }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes ticker {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
+    .ticker-track:hover { animation-play-state:paused; }
+    @keyframes ticker { to{transform:translateX(-50%)} }
     .ticker-item {
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .55rem 1.4rem;
-      font-size: .78rem; font-weight: 600; letter-spacing: .12em;
-      text-transform: uppercase; color: #fff;
-      flex-shrink: 0;
+      display:inline-flex; align-items:center; gap:.45rem;
+      padding:.5rem 1.2rem; font-size:.72rem; font-weight:600;
+      letter-spacing:.12em; text-transform:uppercase; color:#fff; flex-shrink:0;
     }
-    .ticker-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.6); display: inline-block; }
+    .tick-dot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.55); display:inline-block; }
 
-    /* ── Nav ────────────────────────────────────── */
+    /* ── NAV ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      background: rgba(240, 137, 196, .72);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,.2);
+      position:fixed; top:0; left:0; right:0; z-index:300;
+      background:rgba(240,137,196,.78); backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,.2);
     }
+    .nav-inner { max-width:1152px; margin:auto; padding:.7rem 1.2rem; display:flex; align-items:center; justify-content:space-between; }
+    /* mobile menu */
+    #mobile-menu {
+      display:none; flex-direction:column; gap:0;
+      background:rgba(217,95,163,.97); backdrop-filter:blur(12px);
+      border-top:1px solid rgba(255,255,255,.15);
+    }
+    #mobile-menu.open { display:flex; }
+    #mobile-menu a {
+      padding:1rem 1.4rem; color:#fff; font-weight:500; font-size:.95rem;
+      border-bottom:1px solid rgba(255,255,255,.1); display:block;
+      transition:background .2s;
+    }
+    #mobile-menu a:hover { background:rgba(255,255,255,.12); }
+    .hamburger { display:flex; flex-direction:column; gap:5px; cursor:pointer; padding:4px; background:none; border:none; }
+    .hamburger span { width:22px; height:2px; background:#fff; border-radius:2px; display:block; transition:all .3s; }
+    .hamburger.active span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity:0; }
+    .hamburger.active span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
 
-    /* ── FLOATING STICKER BADGES ───────────────── */
-    /* These are the "Est. 2020" style overlapping decorative cards */
+    /* ── STICKER badges ── */
     .sticker {
-      position: absolute;
-      background: #fff;
-      border-radius: 1rem;
-      box-shadow: 0 8px 30px rgba(217,95,163,.25), 0 2px 8px rgba(0,0,0,.08);
-      padding: .7rem 1.1rem;
-      pointer-events: none;
-      z-index: 20;
+      position:absolute; border-radius:1rem;
+      box-shadow:0 8px 30px rgba(217,95,163,.25),0 2px 8px rgba(0,0,0,.08);
+      padding:.65rem 1rem; pointer-events:none; z-index:20;
     }
-    .sticker-pink {
-      background: linear-gradient(135deg, #f089c4, #d95fa3);
-      color: #fff;
-    }
-    .sticker-white {
-      background: #fff;
-      color: #d95fa3;
-    }
-    .sticker-soft {
-      background: #fde8f3;
-      color: #c0508a;
-    }
+    .sticker-pink { background:linear-gradient(135deg,#f089c4,#d95fa3); color:#fff; }
+    .sticker-white { background:#fff; color:#d95fa3; }
+    .sticker-soft  { background:#fde8f3; color:#c0508a; }
+    @keyframes gfloat  { 0%,100%{transform:translateY(0) rotate(var(--rot,-6deg))} 50%{transform:translateY(-8px) rotate(var(--rot,-6deg))} }
+    @keyframes gfloatB { 0%,100%{transform:translateY(0) rotate(var(--rot, 4deg))} 50%{transform:translateY(-10px) rotate(var(--rot, 4deg))} }
+    .fa  { animation:gfloat  5s ease-in-out infinite; }
+    .fb  { animation:gfloatB 6s ease-in-out infinite; }
+    .fc  { animation:gfloat  7s ease-in-out infinite; animation-delay:-2s; }
+    .fd  { animation:gfloatB 5.5s ease-in-out infinite; animation-delay:-3s; }
+    /* hide stickers on tiny screens */
+    @media(max-width:639px){ .sticker { display:none; } }
 
-    /* ── Diagonal stripe overlay ───────────────── */
-    .stripe-overlay {
-      background-image: repeating-linear-gradient(
-        -45deg,
-        rgba(255,255,255,0) 0px,
-        rgba(255,255,255,0) 8px,
-        rgba(255,255,255,.04) 8px,
-        rgba(255,255,255,.04) 10px
-      );
-      position: absolute; inset: 0; pointer-events: none;
-    }
-
-    /* ── Circle ring deco ───────────────────────── */
-    .ring-deco {
-      position: absolute;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,.15);
-      pointer-events: none;
-    }
-
-    /* ── Hero ───────────────────────────────────── */
+    /* ── HERO ── */
     .hero-section {
-      background: linear-gradient(135deg, #f089c4 0%, #d95fa3 40%, #f7aad4 100%);
-      position: relative; overflow: visible;
+      background:linear-gradient(135deg,#f089c4 0%,#d95fa3 45%,#f7aad4 100%);
+      position:relative;
     }
     .hero-photo-frame {
-      border: 3px solid rgba(255,255,255,.45);
-      border-radius: 2rem;
-      overflow: hidden;
-      box-shadow: 0 30px 80px rgba(217,95,163,.4), inset 0 0 0 1px rgba(255,255,255,.15);
-      position: relative; z-index: 2;
+      border:3px solid rgba(255,255,255,.45); border-radius:1.5rem; overflow:hidden;
+      box-shadow:0 20px 60px rgba(217,95,163,.4);
     }
 
-    /* ── Service cards ──────────────────────────── */
-    .service-card {
-      background: linear-gradient(135deg, rgba(255,255,255,.95) 0%, rgba(253,232,243,.9) 100%);
-      border: 1px solid rgba(240,137,196,.25);
-      border-radius: 1.5rem;
-      transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
-      color: #c0508a;
-      position: relative; overflow: hidden;
+    /* ── SERVICE CARDS ── */
+    .svc-card {
+      background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(253,232,243,.9));
+      border:1px solid rgba(240,137,196,.22); border-radius:1.4rem;
+      transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
+      color:#c0508a; position:relative; overflow:hidden;
     }
-    .service-card::before {
-      content: '';
-      position: absolute; top: -30px; right: -30px;
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(240,137,196,.15), transparent 70%);
+    .svc-card::before {
+      content:''; position:absolute; top:-28px; right:-28px; width:90px; height:90px;
+      border-radius:50%; background:radial-gradient(circle,rgba(240,137,196,.14),transparent 70%);
     }
-    .service-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 24px 60px rgba(240,137,196,.35); }
-    .service-card .icon-wrap {
-      background: linear-gradient(135deg, #f089c4, #d95fa3);
-      border-radius: 1rem; width: 56px; height: 56px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem;
-      box-shadow: 0 8px 20px rgba(217,95,163,.3);
+    .svc-card:hover { transform:translateY(-6px) scale(1.015); box-shadow:0 20px 50px rgba(240,137,196,.3); }
+    .icon-wrap {
+      background:linear-gradient(135deg,#f089c4,#d95fa3); border-radius:.875rem;
+      width:52px; height:52px; display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem; box-shadow:0 6px 18px rgba(217,95,163,.3); flex-shrink:0;
     }
 
-    /* ── About ──────────────────────────────────── */
+    /* mobile horizontal scroll for services */
+    .svc-scroll {
+      display:flex; gap:1rem; overflow-x:auto; padding-bottom:1rem;
+      scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+    }
+    .svc-scroll::-webkit-scrollbar { display:none; }
+    .svc-scroll .svc-card {
+      min-width:80vw; max-width:300px; flex-shrink:0;
+      scroll-snap-align:start; padding:1.4rem;
+    }
+    @media(min-width:768px){
+      .svc-scroll { display:grid; grid-template-columns:repeat(2,1fr); overflow:visible; }
+      .svc-scroll .svc-card { min-width:unset; max-width:unset; padding:1.75rem; }
+    }
+    @media(min-width:1024px){
+      .svc-scroll { grid-template-columns:repeat(3,1fr); }
+    }
+
+    /* ── ABOUT ── */
     .about-section {
-      background: linear-gradient(160deg, #f9c4e1 0%, #f089c4 60%, #e06cb0 100%);
-      position: relative; overflow: visible;
+      background:linear-gradient(160deg,#f9c4e1 0%,#f089c4 60%,#e06cb0 100%);
+      position:relative; overflow:hidden;
     }
 
-    /* ── Gallery ────────────────────────────────── */
-    .gallery-item {
-      border-radius: 1.25rem; overflow: hidden;
-      background: linear-gradient(145deg, #fde8f3, #f9c4e1);
-      border: 2px solid rgba(240,137,196,.3);
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-      transition: transform .3s ease, box-shadow .3s ease;
-      cursor: pointer;
+    /* ── GALLERY ── */
+    /* mobile: 2 col uniform grid; desktop: masonry-ish */
+    .gallery-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:.75rem;
+      grid-auto-rows:140px;
     }
-    .gallery-item:hover { transform: scale(1.04); box-shadow: 0 20px 50px rgba(240,137,196,.4); }
+    @media(min-width:640px){ .gallery-grid { grid-auto-rows:170px; } }
+    @media(min-width:768px){ .gallery-grid { grid-template-columns:repeat(4,1fr); grid-auto-rows:180px; } }
+    .g-item {
+      border-radius:1.1rem; overflow:hidden;
+      background:linear-gradient(145deg,#fde8f3,#f9c4e1);
+      border:2px solid rgba(240,137,196,.28);
+      display:flex; align-items:center; justify-content:center;
+      transition:transform .3s,box-shadow .3s; cursor:pointer;
+    }
+    .g-item:hover { transform:scale(1.04); box-shadow:0 16px 40px rgba(240,137,196,.4); }
+    .g-tall { grid-row:span 2; }
 
-    /* ── Hours table ────────────────────────────── */
-    .hours-table tr:nth-child(even) { background: rgba(240,137,196,.08); }
-    .hours-table td { padding: .5rem .75rem; }
+    /* ── HOURS table ── */
+    .hours-table tr:nth-child(even) { background:rgba(240,137,196,.08); }
+    .hours-table td { padding:.55rem .75rem; }
 
-    /* ── Map placeholder ────────────────────────── */
-    .map-placeholder {
-      background: linear-gradient(135deg, #fde8f3 0%, #f9c4e1 100%);
-      border: 2px solid rgba(240,137,196,.4);
-      border-radius: 1.25rem;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    /* ── MAP ── */
+    .map-ph {
+      background:linear-gradient(135deg,#fde8f3,#f9c4e1);
+      border:2px solid rgba(240,137,196,.4); border-radius:1.25rem;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
     }
 
-    /* ── Footer ─────────────────────────────────── */
-    footer {
-      background: linear-gradient(135deg, #d95fa3 0%, #f089c4 100%);
-      position: relative; overflow: hidden;
-    }
-
-    /* ── CTA buttons ─────────────────────────────── */
+    /* ── BUTTONS ── */
     .cta-btn {
-      background: #fff; color: #d95fa3; font-weight: 600;
-      border-radius: 9999px; padding: .85rem 2.2rem;
-      display: inline-block; transition: all .25s ease;
-      letter-spacing: .03em; box-shadow: 0 8px 30px rgba(0,0,0,.12);
+      background:#fff; color:#d95fa3; font-weight:600; border-radius:9999px;
+      padding:.8rem 2rem; display:inline-block; transition:all .25s;
+      letter-spacing:.03em; box-shadow:0 8px 28px rgba(0,0,0,.12); font-size:.95rem;
     }
-    .cta-btn:hover { background: #f9c4e1; color: #b54888; transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,.18); }
-    .cta-btn-outline {
-      background: transparent; color: #fff;
-      border: 2px solid rgba(255,255,255,.7); border-radius: 9999px;
-      padding: .85rem 2.2rem; display: inline-block; transition: all .25s ease;
-      font-weight: 500; letter-spacing: .03em;
+    .cta-btn:hover { background:#f9c4e1; color:#b54888; transform:translateY(-2px); box-shadow:0 14px 36px rgba(0,0,0,.18); }
+    .cta-outline {
+      background:transparent; color:#fff; border:2px solid rgba(255,255,255,.7);
+      border-radius:9999px; padding:.8rem 2rem; display:inline-block;
+      transition:all .25s; font-weight:500; letter-spacing:.03em; font-size:.95rem;
     }
-    .cta-btn-outline:hover { background: rgba(255,255,255,.15); border-color: #fff; transform: translateY(-2px); }
+    .cta-outline:hover { background:rgba(255,255,255,.15); border-color:#fff; transform:translateY(-2px); }
+    /* full-width CTAs on mobile */
+    .btn-row { display:flex; flex-wrap:wrap; gap:.75rem; }
+    @media(max-width:479px){ .btn-row a { width:100%; text-align:center; } }
 
-    /* ── Scroll reveal ───────────────────────────── */
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
-    .reveal.visible { opacity: 1; transform: none; }
-
-    /* ── Star badge / pill ───────────────────────── */
+    /* ── pills ── */
     .star-badge {
-      background: rgba(255,255,255,.2); backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,.35); border-radius: 9999px;
-      display: inline-flex; align-items: center; gap: .4rem;
-      padding: .35rem 1rem; font-size: .8rem; font-weight: 500; color: #fff;
+      background:rgba(255,255,255,.2); backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,.35); border-radius:9999px;
+      display:inline-flex; align-items:center; gap:.4rem;
+      padding:.3rem .9rem; font-size:.75rem; font-weight:500; color:#fff;
     }
     .section-tag {
-      display: inline-block;
-      background: rgba(240,137,196,.15); color: #d95fa3;
-      border: 1px solid rgba(240,137,196,.4); border-radius: 9999px;
-      padding: .3rem 1rem; font-size: .78rem; font-weight: 500;
-      letter-spacing: .08em; text-transform: uppercase;
+      display:inline-block; background:rgba(240,137,196,.15); color:#d95fa3;
+      border:1px solid rgba(240,137,196,.4); border-radius:9999px;
+      padding:.28rem .9rem; font-size:.72rem; font-weight:500;
+      letter-spacing:.08em; text-transform:uppercase;
+    }
+    .tag-white {
+      background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.4);
+    }
+    .tag-chip {
+      font-size:.7rem; background:#fde8f3; color:#d95fa3; border-radius:9999px;
+      padding:.2rem .7rem; display:inline-block;
     }
 
-    /* ── Gentle float animation for stickers ──────── */
-    @keyframes gentleFloat {
-      0%,100% { transform: translateY(0) rotate(var(--rot, -6deg)); }
-      50%      { transform: translateY(-8px) rotate(var(--rot, -6deg)); }
-    }
-    @keyframes gentleFloatB {
-      0%,100% { transform: translateY(0) rotate(var(--rot, 4deg)); }
-      50%      { transform: translateY(-10px) rotate(var(--rot, 4deg)); }
-    }
-    .float-a { animation: gentleFloat 5s ease-in-out infinite; }
-    .float-b { animation: gentleFloatB 6s ease-in-out infinite; }
-    .float-c { animation: gentleFloat 7s ease-in-out infinite; animation-delay: -2s; }
-    .float-d { animation: gentleFloatB 5.5s ease-in-out infinite; animation-delay: -3s; }
+    /* ── stat row ── */
+    .stat-row { display:flex; gap:1.5rem; flex-wrap:wrap; }
+    .stat-divider { width:1px; background:rgba(255,255,255,.2); }
+    @media(max-width:400px){ .stat-divider { display:none; } .stat-row { gap:1rem; } }
 
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #fff8fc; }
-    ::-webkit-scrollbar-thumb { background: #f089c4; border-radius: 99px; }
+    /* ── scroll reveal ── */
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity .65s ease,transform .65s ease; }
+    .reveal.in { opacity:1; transform:none; }
+
+    /* ── footer ── */
+    footer { background:linear-gradient(135deg,#d95fa3,#f089c4); position:relative; overflow:hidden; }
+
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:#fff8fc; }
+    ::-webkit-scrollbar-thumb { background:#f089c4; border-radius:99px; }
   </style>
 </head>
-<body class="noise">
+<body>
 
-<!-- ═══════════════ NAV ═══════════════ -->
+<!-- ════════════════ NAV ════════════════ -->
 <nav>
-  <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
-    <a href="#hero" class="font-script text-2xl text-white tracking-wide">BumbleBear 🐻</a>
-    <div class="hidden md:flex gap-7 text-white text-sm font-medium">
+  <div class="nav-inner">
+    <a href="#hero" class="font-script text-xl text-white tracking-wide">BumbleBear 🐻</a>
+    <!-- desktop links -->
+    <div class="hidden md:flex gap-6 text-white text-sm font-medium">
       <a href="#services" class="hover:text-pink-100 transition-colors">Services</a>
       <a href="#about"    class="hover:text-pink-100 transition-colors">About</a>
       <a href="#gallery"  class="hover:text-pink-100 transition-colors">Gallery</a>
-      <a href="#location" class="hover:text-pink-100 transition-colors">Visit Us</a>
+      <a href="#location" class="hover:text-pink-100 transition-colors">Visit</a>
     </div>
-    <a href="tel:+15165551234" class="cta-btn text-sm py-2 px-5">📞 Call Us</a>
+    <!-- desktop CTA -->
+    <a href="tel:+15165551234" class="hidden md:inline-block cta-btn text-sm py-2 px-5">📞 Call Us</a>
+    <!-- mobile: phone icon + hamburger -->
+    <div class="flex md:hidden items-center gap-3">
+      <a href="tel:+15165551234" class="text-white text-xl">📞</a>
+      <button class="hamburger" id="ham" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <!-- mobile dropdown -->
+  <div id="mobile-menu">
+    <a href="#services" onclick="closeMenu()">Services</a>
+    <a href="#about"    onclick="closeMenu()">About</a>
+    <a href="#gallery"  onclick="closeMenu()">Gallery</a>
+    <a href="#location" onclick="closeMenu()">Visit Us</a>
+    <a href="tel:+15165551234" style="color:#fff;font-weight:700;">📞 (516) 555-1234</a>
   </div>
 </nav>
 
-<!-- ═══════════════ TICKER TAPE ════════ -->
-<div class="ticker-wrap mt-14" style="height:36px; display:flex; align-items:center;">
+<!-- ════════════════ TICKER ════════════ -->
+<div class="ticker-wrap" style="margin-top:52px;">
   <div class="ticker-track">
-    <!-- First copy -->
-    <span class="ticker-item"><span class="ticker-dot"></span> Squishies</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Collectables</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Trending Toys</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Limited Drops</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Dolls</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Legos</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> East Northport, NY</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> New Arrivals Weekly</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> TikTok Faves</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Blind Boxes</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Vinyl Figures</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> 1916 Jericho Tpke</span>
-    <!-- Exact duplicate for seamless loop -->
-    <span class="ticker-item"><span class="ticker-dot"></span> Squishies</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Collectables</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Trending Toys</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Limited Drops</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Dolls</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Legos</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> East Northport, NY</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> New Arrivals Weekly</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> TikTok Faves</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Blind Boxes</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Vinyl Figures</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> 1916 Jericho Tpke</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Squishies</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Collectables</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Trending Toys</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Limited Drops</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Dolls</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Legos</span>
+    <span class="ticker-item"><span class="tick-dot"></span>East Northport NY</span>
+    <span class="ticker-item"><span class="tick-dot"></span>New Weekly</span>
+    <span class="ticker-item"><span class="tick-dot"></span>TikTok Faves</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Blind Boxes</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Vinyl Figures</span>
+    <span class="ticker-item"><span class="tick-dot"></span>1916 Jericho Tpke</span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item"><span class="tick-dot"></span>Squishies</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Collectables</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Trending Toys</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Limited Drops</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Dolls</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Legos</span>
+    <span class="ticker-item"><span class="tick-dot"></span>East Northport NY</span>
+    <span class="ticker-item"><span class="tick-dot"></span>New Weekly</span>
+    <span class="ticker-item"><span class="tick-dot"></span>TikTok Faves</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Blind Boxes</span>
+    <span class="ticker-item"><span class="tick-dot"></span>Vinyl Figures</span>
+    <span class="ticker-item"><span class="tick-dot"></span>1916 Jericho Tpke</span>
   </div>
 </div>
 
-<!-- ═══════════════ HERO ═══════════════ -->
-<section id="hero" class="hero-section dot-pattern min-h-screen flex items-center pt-6 pb-32 px-5" style="overflow:visible;">
-  <!-- Background blobs -->
-  <div class="blob w-80 h-80 opacity-25" style="background:#fde8f3; top:-60px; left:-60px; animation-delay:0s;"></div>
-  <div class="blob w-96 h-96 opacity-15" style="background:#fff; bottom:40px; right:-40px; animation-delay:-4s;"></div>
-  <!-- Ring deco -->
-  <div class="ring-deco" style="width:300px;height:300px;top:10%;right:5%;opacity:.2;"></div>
-  <div class="ring-deco" style="width:160px;height:160px;top:60%;left:8%;opacity:.15;border-width:3px;"></div>
-  <!-- Stripe overlay -->
-  <div class="stripe-overlay"></div>
+<!-- ════════════════ HERO ════════════════ -->
+<section id="hero" class="hero-section dot-pattern">
+  <!-- bg deco -->
+  <div class="blob" style="width:260px;height:260px;background:#fde8f3;opacity:.22;top:-60px;left:-60px;"></div>
+  <div class="blob" style="width:200px;height:200px;background:#fff;opacity:.12;bottom:30px;right:-40px;animation-delay:-4s;"></div>
+  <div class="ring"  style="width:220px;height:220px;top:8%;right:3%;"></div>
+  <div class="stripes"></div>
 
-  <!-- ★ FLOATING STICKER BADGES ★ -->
-  <!-- "Open Today" pill — top left of photo frame -->
-  <div class="sticker sticker-white float-a" style="--rot:-8deg; top:12%; right:calc(50% - 380px); font-size:.72rem; font-weight:700; color:#d95fa3; z-index:30; border:2px solid #fde8f3;">
-    <div style="font-size:1.1rem; text-align:center;">🟢</div>
-    <div>Open Today</div>
+  <!-- floating stickers (hidden on mobile via CSS) -->
+  <div class="sticker sticker-white fa" style="--rot:-8deg;top:14%;right:calc(50% - 390px);font-size:.7rem;font-weight:700;z-index:30;">
+    <div style="font-size:1rem;text-align:center;">🟢</div><div>Open Today</div>
+  </div>
+  <div class="sticker sticker-soft fc" style="--rot:7deg;top:9%;right:calc(50% - 530px);font-size:.68rem;font-weight:700;color:#c0508a;z-index:30;border:2px solid rgba(240,137,196,.25);">
+    <span style="font-size:.9rem;">🔥</span> New Drop!
+  </div>
+  <div class="sticker sticker-white fd" style="--rot:-4deg;bottom:-24px;left:4%;z-index:30;text-align:center;padding:.9rem 1.3rem;">
+    <div class="font-script text-xl" style="color:#f089c4;">Est. 2020</div>
+    <div style="font-size:.6rem;color:#bbb;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;">East Northport's Own</div>
+  </div>
+  <div class="sticker sticker-pink fb" style="--rot:5deg;bottom:15%;left:calc(50% - 20px);text-align:center;z-index:30;min-width:86px;font-size:.65rem;font-weight:700;">
+    <div style="font-size:1.2rem;">⭐</div><div style="margin-top:2px;">5-Star Shop</div>
   </div>
 
-  <!-- "★ 5 Stars" badge — bottom-left of photo, overlapping frame edge -->
-  <div class="sticker sticker-pink float-b" style="--rot:5deg; bottom:14%; left:calc(50% - 10px); text-align:center; z-index:30; min-width:90px;">
-    <div style="font-size:1.3rem;">⭐</div>
-    <div style="font-size:.65rem; font-weight:700; opacity:.9; margin-top:2px;">5-Star Shop</div>
-  </div>
-
-  <!-- "New Drop 🔥" sticker — overlaps top-right of photo frame -->
-  <div class="sticker sticker-soft float-c" style="--rot:7deg; top:8%; right:calc(50% - 520px); font-size:.7rem; font-weight:700; color:#c0508a; z-index:30; border:2px solid rgba(240,137,196,.3);">
-    <span style="font-size:1rem;">🔥</span> New Drop!
-  </div>
-
-  <!-- "Est. 2020 / East Northport's Own" card — hero, overlapping bottom of text col -->
-  <div class="sticker sticker-white float-d" style="--rot:-4deg; bottom:-28px; left:5%; z-index:30; text-align:center; padding:1rem 1.4rem;">
-    <div class="font-script text-2xl" style="color:#f089c4;">Est. 2020</div>
-    <div style="font-size:.65rem; color:#bbb; margin-top:2px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;">East Northport's Own</div>
-  </div>
-
-  <div class="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-14 items-center relative z-10">
-    <!-- Left copy -->
-    <div>
-      <div class="star-badge mb-5">⭐ East Northport's Cutest Shop</div>
-      <h1 class="font-script text-7xl md:text-8xl text-white leading-none drop-shadow-lg mb-2">Bumble<br>Bear</h1>
-      <p class="font-display italic text-pink-100 text-xl mb-4">Where every visit feels like finding treasure.</p>
-      <p class="text-white/80 text-base leading-relaxed mb-8 max-w-md">Your cozy local destination for squishies, collectables, trending toys, Legos, dolls & so much more — tucked right here in East Northport, NY.</p>
-      <div class="flex flex-wrap gap-3">
+  <div class="max-w-5xl mx-auto px-5 py-14 md:py-20 relative z-10">
+    <!-- MOBILE: stacked, centered -->
+    <div class="flex flex-col items-center text-center md:hidden gap-6">
+      <div class="star-badge">⭐ East Northport's Cutest Shop</div>
+      <h1 class="font-script text-6xl text-white drop-shadow-lg leading-none">Bumble<br>Bear</h1>
+      <p class="font-display italic text-pink-100 text-lg">Where every visit feels like finding treasure.</p>
+      <p class="text-white/80 text-sm leading-relaxed max-w-xs">Your cozy local destination for squishies, collectables, trending toys, Legos, dolls & more — right here in East Northport, NY.</p>
+      <!-- info chips row -->
+      <div class="flex gap-3 text-white/70 text-xs flex-wrap justify-center">
+        <span class="bg-white/15 rounded-full px-3 py-1">🕐 Open 7 Days</span>
+        <span class="bg-white/15 rounded-full px-3 py-1">📍 1916 Jericho Tpke</span>
+      </div>
+      <!-- hero photo -->
+      <div class="hero-photo-frame w-full">
+        <div style="background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06));height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-size:3rem;margin-bottom:.5rem;">🏪</div>
+          <p class="font-display text-white/75 text-base italic">Shop Interior Photo</p>
+          <p class="text-white/45 text-xs mt-1">Replace with high-res shop photo</p>
+        </div>
+      </div>
+      <!-- CTAs -->
+      <div class="btn-row w-full justify-center">
         <a href="#services" class="cta-btn">✨ View Services</a>
-        <a href="tel:+15165551234" class="cta-btn-outline">📞 (516) 555-1234</a>
-      </div>
-      <div class="mt-7 flex items-center gap-4 text-white/70 text-sm">
-        <span>🕐 Open 7 Days</span><span>•</span><span>📍 1916 Jericho Tpke</span>
+        <a href="tel:+15165551234" class="cta-outline">📞 (516) 555-1234</a>
       </div>
     </div>
-    <!-- Right photo -->
-    <div class="hero-photo-frame">
-      <div style="background:linear-gradient(145deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.06) 100%);backdrop-filter:blur(4px);width:100%;height:460px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-        <div class="text-6xl mb-4">🏪</div>
-        <p class="font-display text-white/80 text-lg italic">Shop Interior Photo</p>
-        <p class="text-white/50 text-sm mt-1">Replace with high-res shop photo</p>
+
+    <!-- DESKTOP: side by side -->
+    <div class="hidden md:grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="star-badge mb-5">⭐ East Northport's Cutest Shop</div>
+        <h1 class="font-script text-7xl lg:text-8xl text-white leading-none drop-shadow-lg mb-2">Bumble<br>Bear</h1>
+        <p class="font-display italic text-pink-100 text-xl mb-4">Where every visit feels like finding treasure.</p>
+        <p class="text-white/80 text-base leading-relaxed mb-8 max-w-md">Your cozy local destination for squishies, collectables, trending toys, Legos, dolls & so much more — tucked right here in East Northport, NY.</p>
+        <div class="btn-row mb-6">
+          <a href="#services" class="cta-btn">✨ View Services</a>
+          <a href="tel:+15165551234" class="cta-outline">📞 (516) 555-1234</a>
+        </div>
+        <div class="flex items-center gap-4 text-white/65 text-sm">
+          <span>🕐 Open 7 Days</span><span>•</span><span>📍 1916 Jericho Tpke</span>
+        </div>
+      </div>
+      <div class="hero-photo-frame">
+        <div style="background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06));height:460px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-size:4rem;margin-bottom:1rem;">🏪</div>
+          <p class="font-display text-white/80 text-lg italic">Shop Interior Photo</p>
+          <p class="text-white/50 text-sm mt-1">Replace with high-res shop photo</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Wave divider -->
-<div style="margin-top:-2px; background:linear-gradient(135deg,#f089c4,#d95fa3,#f7aad4);">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 60" style="display:block;" preserveAspectRatio="none" width="100%" height="60">
-    <path fill="#fff8fc" d="M0,40 C360,80 1080,0 1440,40 L1440,60 L0,60 Z"/>
+<!-- wave -->
+<div style="background:linear-gradient(135deg,#f089c4,#d95fa3);margin-bottom:-2px;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
+    <path fill="#fff8fc" d="M0,30 C360,60 1080,0 1440,30 L1440,50 L0,50 Z"/>
   </svg>
 </div>
 
-<!-- ═══════════════ SERVICES ═══════════ -->
-<section id="services" class="py-28 px-5 relative" style="background:#fff8fc; overflow:visible;">
-  <div class="dot-pattern-dark absolute inset-0 pointer-events-none"></div>
-
-  <!-- Floating stickers in services section -->
-  <div class="sticker sticker-pink float-a" style="--rot:-10deg; top:-18px; right:8%; z-index:10; font-size:.68rem; font-weight:700; text-align:center; padding:.65rem 1rem;">
-    <div style="font-size:1.1rem;">🧸</div>
-    <div style="margin-top:2px;">500+ Items</div>
+<!-- ════════════════ SERVICES ════════════ -->
+<section id="services" class="py-16 md:py-24 px-4 md:px-6 relative" style="background:#fff8fc;overflow:hidden;">
+  <div class="dot-pattern-pink absolute inset-0 pointer-events-none"></div>
+  <!-- stickers desktop only -->
+  <div class="sticker sticker-pink fa" style="--rot:-10deg;top:-16px;right:7%;z-index:10;font-size:.65rem;font-weight:700;text-align:center;padding:.6rem .9rem;">
+    <div style="font-size:1rem;">🧸</div><div style="margin-top:2px;">500+ Items</div>
   </div>
-  <div class="sticker sticker-soft float-c" style="--rot:8deg; top:60px; left:3%; z-index:10; font-size:.68rem; color:#c0508a; font-weight:600; padding:.65rem 1rem;">
-    ✦ New Weekly
-  </div>
+  <div class="sticker sticker-soft fc" style="--rot:7deg;top:55px;left:2%;z-index:10;font-size:.65rem;color:#c0508a;font-weight:600;padding:.6rem .9rem;">✦ New Weekly</div>
 
-  <div class="max-w-6xl mx-auto relative z-2">
-    <div class="text-center mb-14 reveal">
+  <div class="max-w-5xl mx-auto relative z-10">
+    <div class="text-center mb-10 reveal">
       <span class="section-tag">What We Carry</span>
-      <h2 class="font-display text-4xl md:text-5xl font-bold mt-4 text-pink-brand">Our Collections</h2>
-      <p class="text-gray-400 mt-3 max-w-xl mx-auto text-base">From viral TikTok finds to timeless childhood favorites — BumbleBear stocks the good stuff, always refreshed with the latest drops.</p>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-3 text-pink-brand">Our Collections</h2>
+      <p class="text-gray-400 mt-3 max-w-lg mx-auto text-sm">From viral TikTok finds to timeless childhood favorites — always refreshed with the latest drops.</p>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-      <div class="service-card p-7 reveal">
-        <div class="icon-wrap mb-5">🧸</div>
-        <h3 class="font-display text-xl font-bold mb-2">Squishies</h3>
-        <p class="text-sm leading-relaxed text-pink-deep/70">Slow-rise, scented, and character squishies. We stock the rarest limited-edition finds from top brands — perfect for collectors and kids alike.</p>
-        <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Original</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Limited Ed.</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Scented</span>
+    <!-- mobile: horizontal scroll  |  tablet+: grid -->
+    <div class="svc-scroll reveal">
+
+      <div class="svc-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrap">🧸</div>
+          <div><h3 class="font-display text-lg font-bold">Squishies</h3><p class="text-xs text-pink-deep/60 mt-1">Slow-rise, scented & limited-edition</p></div>
+        </div>
+        <p class="text-sm leading-relaxed text-pink-deep/70">Slow-rise, scented, and character squishies. We stock rare limited-edition finds from top brands — perfect for collectors and kids alike.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5">
+          <span class="tag-chip">Original</span><span class="tag-chip">Limited Ed.</span><span class="tag-chip">Scented</span>
         </div>
       </div>
 
-      <div class="service-card p-7 reveal" style="transition-delay:.07s">
-        <div class="icon-wrap mb-5">🪆</div>
-        <h3 class="font-display text-xl font-bold mb-2">Dolls</h3>
-        <p class="text-sm leading-relaxed text-pink-deep/70">From classic play dolls to fashion lines and art dolls, we curate a thoughtful range that celebrates creativity and self-expression in every age group.</p>
-        <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Fashion</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Collectible</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Mini</span>
+      <div class="svc-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrap">🪆</div>
+          <div><h3 class="font-display text-lg font-bold">Dolls</h3><p class="text-xs text-pink-deep/60 mt-1">Fashion, art & collectible dolls</p></div>
+        </div>
+        <p class="text-sm leading-relaxed text-pink-deep/70">From classic play dolls to fashion lines and art dolls — a range that celebrates creativity and self-expression in every age group.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5">
+          <span class="tag-chip">Fashion</span><span class="tag-chip">Collectible</span><span class="tag-chip">Mini</span>
         </div>
       </div>
 
-      <div class="service-card p-7 reveal" style="transition-delay:.14s">
-        <div class="icon-wrap mb-5">🏆</div>
-        <h3 class="font-display text-xl font-bold mb-2">Collectables</h3>
-        <p class="text-sm leading-relaxed text-pink-deep/70">Blind boxes, trading figures, vinyl art toys, and pop culture icons. Whether you're building a shelf or hunting for that one missing piece — we've got you.</p>
-        <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Blind Boxes</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Vinyl</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Figures</span>
+      <div class="svc-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrap">🏆</div>
+          <div><h3 class="font-display text-lg font-bold">Collectables</h3><p class="text-xs text-pink-deep/60 mt-1">Blind boxes, vinyl & figures</p></div>
+        </div>
+        <p class="text-sm leading-relaxed text-pink-deep/70">Blind boxes, trading figures, vinyl art toys, and pop culture icons. Whether you're building a shelf or hunting that missing piece — we've got you.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5">
+          <span class="tag-chip">Blind Boxes</span><span class="tag-chip">Vinyl</span><span class="tag-chip">Figures</span>
         </div>
       </div>
 
-      <div class="service-card p-7 reveal" style="transition-delay:.21s">
-        <div class="icon-wrap mb-5">🎮</div>
-        <h3 class="font-display text-xl font-bold mb-2">Toys</h3>
-        <p class="text-sm leading-relaxed text-pink-deep/70">Classic and contemporary toys that spark imagination. Sensory toys, fidgets, outdoor fun, and indoor games — hand-picked for quality and playability.</p>
-        <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Sensory</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Fidgets</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Games</span>
+      <div class="svc-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrap">🎮</div>
+          <div><h3 class="font-display text-lg font-bold">Toys</h3><p class="text-xs text-pink-deep/60 mt-1">Sensory, fidgets & games</p></div>
+        </div>
+        <p class="text-sm leading-relaxed text-pink-deep/70">Classic and contemporary toys that spark imagination. Sensory toys, fidgets, outdoor fun, and indoor games — hand-picked for quality.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5">
+          <span class="tag-chip">Sensory</span><span class="tag-chip">Fidgets</span><span class="tag-chip">Games</span>
         </div>
       </div>
 
-      <div class="service-card p-7 reveal" style="transition-delay:.28s">
-        <div class="icon-wrap mb-5">🧱</div>
-        <h3 class="font-display text-xl font-bold mb-2">Legos</h3>
-        <p class="text-sm leading-relaxed text-pink-deep/70">Sets for all skill levels — from starter kits to iconic Architecture and Technic builds. We stock current sets and hard-to-find retired editions too.</p>
-        <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Technic</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Icons</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Starter</span>
+      <div class="svc-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrap">🧱</div>
+          <div><h3 class="font-display text-lg font-bold">Legos</h3><p class="text-xs text-pink-deep/60 mt-1">Technic, Icons & starter sets</p></div>
+        </div>
+        <p class="text-sm leading-relaxed text-pink-deep/70">Sets for all skill levels — from starter kits to iconic Architecture and Technic builds. Current sets and hard-to-find retired editions.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5">
+          <span class="tag-chip">Technic</span><span class="tag-chip">Icons</span><span class="tag-chip">Starter</span>
         </div>
       </div>
 
-      <div class="service-card p-7 reveal" style="transition-delay:.35s">
-        <div class="icon-wrap mb-5">🔥</div>
-        <h3 class="font-display text-xl font-bold mb-2">Trending Items</h3>
-        <p class="text-sm leading-relaxed text-pink-deep/70">Saw something blow up on TikTok or YouTube? We rotate trending finds weekly — so if it's viral, chances are it's already on our shelves in East Northport.</p>
-        <div class="mt-5 flex flex-wrap gap-2">
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Viral Drops</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">Weekly New</span>
-          <span class="text-xs bg-pink-soft text-pink-deep rounded-full px-3 py-1">TikTok Faves</span>
+      <div class="svc-card">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrap">🔥</div>
+          <div><h3 class="font-display text-lg font-bold">Trending Items</h3><p class="text-xs text-pink-deep/60 mt-1">Viral weekly drops</p></div>
+        </div>
+        <p class="text-sm leading-relaxed text-pink-deep/70">Saw something blow up on TikTok or YouTube? We rotate trending finds weekly — if it's viral, chances are it's already on our shelves.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5">
+          <span class="tag-chip">Viral Drops</span><span class="tag-chip">Weekly</span><span class="tag-chip">TikTok</span>
+        </div>
+      </div>
+    </div>
+    <!-- mobile scroll hint -->
+    <p class="text-center text-pink-brand/50 text-xs mt-4 md:hidden">← swipe to see more →</p>
+  </div>
+</section>
+
+<!-- wave -->
+<div style="background:#fff8fc;margin-bottom:-2px;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
+    <path fill="#f089c4" d="M0,16 C360,-16 1080,46 1440,16 L1440,50 L0,50 Z"/>
+  </svg>
+</div>
+
+<!-- ════════════════ ABOUT ════════════════ -->
+<section id="about" class="about-section dot-pattern py-16 md:py-24 px-4 md:px-6" style="overflow:visible;">
+  <div class="blob" style="width:280px;height:280px;background:#fff;opacity:.14;top:0;right:-30px;animation-delay:-2s;"></div>
+  <div class="blob" style="width:180px;height:180px;background:#fde8f3;opacity:.15;bottom:0;left:-30px;animation-delay:-5s;"></div>
+  <div class="stripes"></div>
+  <div class="ring" style="width:200px;height:200px;bottom:8%;right:8%;opacity:.18;"></div>
+
+  <!-- stickers desktop only -->
+  <div class="sticker sticker-white fb" style="--rot:6deg;top:-18px;left:10%;z-index:30;text-align:center;padding:.75rem 1.1rem;">
+    <div style="font-size:1.2rem;">📍</div>
+    <div style="font-size:.62rem;color:#d95fa3;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:.06em;">Long Island</div>
+  </div>
+  <div class="sticker sticker-pink fd" style="--rot:-7deg;bottom:-14px;right:8%;z-index:30;text-align:center;padding:.75rem 1.1rem;min-width:96px;">
+    <div style="font-size:1rem;">✨</div><div style="font-size:.62rem;font-weight:700;margin-top:2px;">Always Trending</div>
+  </div>
+  <div class="sticker sticker-white fa" style="--rot:-5deg;bottom:50px;left:calc(50% - 290px);z-index:30;text-align:center;padding:.9rem 1.3rem;">
+    <div class="font-script text-xl" style="color:#f089c4;">Est. 2020</div>
+    <div style="font-size:.6rem;color:#bbb;margin-top:2px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">East Northport's Own</div>
+  </div>
+
+  <div class="max-w-5xl mx-auto relative z-10">
+    <!-- MOBILE: stacked, copy first -->
+    <div class="flex flex-col gap-8 md:hidden">
+      <div class="reveal text-center">
+        <span class="section-tag tag-white">Our Story</span>
+        <h2 class="font-display text-3xl font-bold text-white mt-4 mb-4 leading-tight">Modern Day <em>Popular.</em></h2>
+        <p class="text-white/85 text-sm leading-relaxed mb-3">BumbleBear was born from a simple obsession: finding the coolest, most sought-after items before everyone else does. Rooted right here in East Northport, Long Island.</p>
+        <p class="text-white/80 text-sm leading-relaxed">We track what's trending — on TikTok, YouTube, and beyond — and make sure our shelves reflect what kids, collectors, and curious adults actually want.</p>
+      </div>
+      <!-- stat row mobile -->
+      <div class="reveal flex justify-center gap-6">
+        <div class="text-center"><p class="font-display text-2xl font-bold text-white">500+</p><p class="text-white/55 text-xs">Products</p></div>
+        <div class="w-px bg-white/20"></div>
+        <div class="text-center"><p class="font-display text-2xl font-bold text-white">7</p><p class="text-white/55 text-xs">Days/Week</p></div>
+        <div class="w-px bg-white/20"></div>
+        <div class="text-center"><p class="font-display text-2xl font-bold text-white">★ 5.0</p><p class="text-white/55 text-xs">Rating</p></div>
+      </div>
+      <!-- photo mobile -->
+      <div class="reveal rounded-2xl overflow-hidden border-2 border-white/25 shadow-xl" style="height:220px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;">
+        <div class="text-center"><div style="font-size:3rem;margin-bottom:.5rem;">🛍️</div><p class="text-white/65 font-display italic text-sm">Shop Photo Placeholder</p></div>
+      </div>
+    </div>
+
+    <!-- DESKTOP: side by side -->
+    <div class="hidden md:grid md:grid-cols-2 gap-14 items-center">
+      <div class="relative reveal">
+        <div class="rounded-3xl overflow-hidden border-2 border-white/28 shadow-2xl" style="height:420px;background:rgba(255,255,255,.12);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;">
+          <div class="text-center"><div style="font-size:4rem;margin-bottom:.75rem;">🛍️</div><p class="text-white/70 font-display italic">Shop Photo Placeholder</p></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <span class="section-tag tag-white">Our Story</span>
+        <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mt-4 mb-6 leading-tight">Modern Day <br><em>Popular.</em></h2>
+        <p class="text-white/85 text-base leading-relaxed mb-4">BumbleBear was born from a simple obsession: finding the coolest, most sought-after items before everyone else does. Rooted right here in East Northport, Long Island, we're the neighborhood shop that moves at the speed of culture.</p>
+        <p class="text-white/85 text-base leading-relaxed mb-4">We track what's trending — on TikTok, YouTube, and beyond — and make sure our shelves reflect what kids, collectors, and curious adults actually want. No filler. Only the good stuff.</p>
+        <p class="text-white/80 text-base leading-relaxed mb-8">Whether you're a seasoned collector hunting a rare blind box or a parent nailing that birthday gift — walking into BumbleBear should feel like a discovery every time.</p>
+        <div class="stat-row">
+          <div class="text-center"><p class="font-display text-3xl font-bold text-white">500+</p><p class="text-white/55 text-sm">Products Stocked</p></div>
+          <div class="stat-divider"></div>
+          <div class="text-center"><p class="font-display text-3xl font-bold text-white">7</p><p class="text-white/55 text-sm">Days a Week</p></div>
+          <div class="stat-divider"></div>
+          <div class="text-center"><p class="font-display text-3xl font-bold text-white">★ 5.0</p><p class="text-white/55 text-sm">Community Rating</p></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Wave divider -->
-<div style="background:#fff8fc; margin-bottom:-2px;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 60" style="display:block;" preserveAspectRatio="none" width="100%" height="60">
-    <path fill="#f089c4" d="M0,20 C360,-20 1080,60 1440,20 L1440,60 L0,60 Z"/>
+<!-- wave -->
+<div style="background:#f089c4;margin-bottom:-2px;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
+    <path fill="#fff8fc" d="M0,32 C480,0 960,50 1440,18 L1440,50 L0,50 Z"/>
   </svg>
 </div>
 
-<!-- ═══════════════ ABOUT ═══════════════ -->
-<section id="about" class="about-section dot-pattern py-28 px-5" style="overflow:visible;">
-  <div class="blob w-96 h-96 opacity-20" style="background:#fff; top:0; right:0; animation-delay:-2s;"></div>
-  <div class="blob w-64 h-64 opacity-15" style="background:#fde8f3; bottom:0; left:-40px; animation-delay:-5s;"></div>
-  <div class="stripe-overlay"></div>
-  <!-- Ring decos -->
-  <div class="ring-deco" style="width:240px;height:240px;bottom:10%;right:10%;opacity:.18;"></div>
-  <div class="ring-deco" style="width:100px;height:100px;top:15%;left:15%;opacity:.2;border-width:3px;"></div>
-
-  <!-- Floating sticker overlays for About -->
-  <div class="sticker sticker-white float-b" style="--rot:6deg; top:-20px; left:12%; z-index:30; text-align:center; padding:.8rem 1.2rem;">
-    <div style="font-size:1.3rem;">📍</div>
-    <div style="font-size:.65rem; color:#d95fa3; font-weight:700; margin-top:2px; text-transform:uppercase; letter-spacing:.06em;">Long Island</div>
+<!-- ════════════════ GALLERY ════════════ -->
+<section id="gallery" class="py-16 md:py-24 px-4 md:px-6 relative" style="background:#fff8fc;overflow:visible;">
+  <div class="dot-pattern-pink absolute inset-0 pointer-events-none"></div>
+  <div class="sticker sticker-pink fb" style="--rot:9deg;top:-14px;left:4%;z-index:10;font-size:.65rem;font-weight:700;padding:.6rem .9rem;text-align:center;">
+    <div style="font-size:.95rem;">📸</div><div style="margin-top:2px;">Photo Wall</div>
   </div>
-  <div class="sticker sticker-pink float-d" style="--rot:-7deg; bottom:-16px; right:10%; z-index:30; text-align:center; padding:.8rem 1.2rem; min-width:100px;">
-    <div style="font-size:1.1rem;">✨</div>
-    <div style="font-size:.65rem; font-weight:700; margin-top:2px;">Always Trending</div>
-  </div>
-  <!-- The OG "Est. 2020" style but a second one for About photo -->
-  <div class="sticker sticker-white float-a" style="--rot:-5deg; bottom:60px; left:calc(50% - 300px); z-index:30; text-align:center; padding:1rem 1.4rem;">
-    <div class="font-script text-2xl" style="color:#f089c4;">Est. 2020</div>
-    <div style="font-size:.65rem; color:#bbb; margin-top:2px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;">East Northport's Own</div>
-  </div>
+  <div class="sticker sticker-soft fc" style="--rot:-6deg;top:70px;right:3%;z-index:10;font-size:.65rem;color:#c0508a;font-weight:600;padding:.6rem .9rem;">✦ Shop Vibes</div>
 
-  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center relative z-10">
-    <!-- Photo placeholder -->
-    <div class="relative reveal">
-      <div class="rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl" style="height:420px; background:rgba(255,255,255,.12); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center;">
-        <div class="text-center">
-          <div class="text-6xl mb-3">🛍️</div>
-          <p class="text-white/70 font-display italic">Shop Photo Placeholder</p>
-        </div>
-      </div>
-    </div>
-    <!-- Copy -->
-    <div class="reveal">
-      <span class="section-tag" style="background:rgba(255,255,255,.2); color:#fff; border-color:rgba(255,255,255,.4);">Our Story</span>
-      <h2 class="font-display text-4xl md:text-5xl font-bold text-white mt-4 mb-6 leading-tight">Modern Day <br><em>Popular.</em></h2>
-      <p class="text-white/85 text-base leading-relaxed mb-4">BumbleBear was born from a simple obsession: finding the coolest, most sought-after items before everyone else does. Rooted right here in East Northport, Long Island, we're the neighborhood shop that moves at the speed of culture.</p>
-      <p class="text-white/85 text-base leading-relaxed mb-4">We track what's trending — on TikTok, YouTube, and beyond — and make sure our shelves reflect what kids, collectors, and curious adults actually want. No filler. Only the good stuff, curated with genuine love for this community.</p>
-      <p class="text-white/85 text-base leading-relaxed mb-8">Whether you're a seasoned collector hunting for a rare blind box or a parent trying to nail that birthday gift, walking into BumbleBear should feel like a discovery every single time.</p>
-      <div class="flex flex-wrap gap-5">
-        <div class="text-center">
-          <p class="font-display text-3xl font-bold text-white">500+</p>
-          <p class="text-white/60 text-sm">Products Stocked</p>
-        </div>
-        <div class="w-px bg-white/20"></div>
-        <div class="text-center">
-          <p class="font-display text-3xl font-bold text-white">7</p>
-          <p class="text-white/60 text-sm">Days a Week</p>
-        </div>
-        <div class="w-px bg-white/20"></div>
-        <div class="text-center">
-          <p class="font-display text-3xl font-bold text-white">★ 5.0</p>
-          <p class="text-white/60 text-sm">Community Rating</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Wave divider -->
-<div style="background:#f089c4; margin-bottom:-2px;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 60" style="display:block;" preserveAspectRatio="none" width="100%" height="60">
-    <path fill="#fff8fc" d="M0,40 C480,0 960,60 1440,20 L1440,60 L0,60 Z"/>
-  </svg>
-</div>
-
-<!-- ═══════════════ GALLERY ═══════════ -->
-<section id="gallery" class="py-28 px-5 relative" style="background:#fff8fc; overflow:visible;">
-  <div class="dot-pattern-dark absolute inset-0 pointer-events-none"></div>
-
-  <!-- Gallery floating stickers -->
-  <div class="sticker sticker-pink float-b" style="--rot:9deg; top:-14px; left:5%; z-index:10; font-size:.68rem; font-weight:700; padding:.65rem 1rem; text-align:center;">
-    <div style="font-size:1rem;">📸</div>
-    <div style="margin-top:2px;">Photo Wall</div>
-  </div>
-  <div class="sticker sticker-soft float-c" style="--rot:-6deg; top:80px; right:4%; z-index:10; font-size:.68rem; color:#c0508a; font-weight:600; padding:.65rem 1rem;">
-    ✦ Shop Vibes
-  </div>
-
-  <div class="max-w-6xl mx-auto relative z-2">
-    <div class="text-center mb-14 reveal">
+  <div class="max-w-5xl mx-auto relative z-10">
+    <div class="text-center mb-10 reveal">
       <span class="section-tag">Inside BumbleBear</span>
-      <h2 class="font-display text-4xl md:text-5xl font-bold mt-4 text-pink-brand">Shop Gallery</h2>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-3 text-pink-brand">Shop Gallery</h2>
       <p class="text-gray-400 mt-3 max-w-lg mx-auto text-sm">A peek at our colorful shelves, trending picks, and the vibe that makes BumbleBear unlike anywhere else on Long Island.</p>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" style="grid-auto-rows:180px;">
-      <div class="gallery-item row-span-2 reveal" style="grid-row:span 2;">
-        <div class="text-center p-4"><div class="text-5xl mb-2">🧸</div><p class="text-pink-deep/50 text-xs font-medium">Squishy Wall</p></div>
+    <div class="gallery-grid reveal">
+      <!-- tall items only on md+ -->
+      <div class="g-item md:g-tall" style="grid-row:span 1;" class="reveal">
+        <div class="text-center p-3"><div style="font-size:2.5rem;margin-bottom:.3rem;">🧸</div><p class="text-pink-deep/50 text-xs font-medium">Squishy Wall</p></div>
       </div>
-      <div class="gallery-item reveal" style="transition-delay:.08s">
-        <div class="text-center"><div class="text-4xl mb-1">🏆</div><p class="text-pink-deep/50 text-xs">Collectables Shelf</p></div>
+      <div class="g-item reveal">
+        <div class="text-center"><div style="font-size:2.2rem;margin-bottom:.2rem;">🏆</div><p class="text-pink-deep/50 text-xs">Collectables</p></div>
       </div>
-      <div class="gallery-item reveal" style="transition-delay:.12s">
-        <div class="text-center"><div class="text-4xl mb-1">🧱</div><p class="text-pink-deep/50 text-xs">Lego Corner</p></div>
+      <div class="g-item reveal">
+        <div class="text-center"><div style="font-size:2.2rem;margin-bottom:.2rem;">🧱</div><p class="text-pink-deep/50 text-xs">Lego Corner</p></div>
       </div>
-      <div class="gallery-item row-span-2 reveal" style="transition-delay:.16s; grid-row:span 2;">
-        <div class="text-center p-4"><div class="text-5xl mb-2">🪆</div><p class="text-pink-deep/50 text-xs font-medium">Doll Display</p></div>
+      <div class="g-item reveal">
+        <div class="text-center p-3"><div style="font-size:2.5rem;margin-bottom:.3rem;">🪆</div><p class="text-pink-deep/50 text-xs font-medium">Doll Display</p></div>
       </div>
-      <div class="gallery-item reveal" style="transition-delay:.20s">
-        <div class="text-center"><div class="text-4xl mb-1">🔥</div><p class="text-pink-deep/50 text-xs">Trending Zone</p></div>
+      <div class="g-item reveal">
+        <div class="text-center"><div style="font-size:2.2rem;margin-bottom:.2rem;">🔥</div><p class="text-pink-deep/50 text-xs">Trending Zone</p></div>
       </div>
-      <div class="gallery-item reveal" style="transition-delay:.24s">
-        <div class="text-center"><div class="text-4xl mb-1">🛍️</div><p class="text-pink-deep/50 text-xs">New Arrivals</p></div>
+      <div class="g-item reveal">
+        <div class="text-center"><div style="font-size:2.2rem;margin-bottom:.2rem;">🛍️</div><p class="text-pink-deep/50 text-xs">New Arrivals</p></div>
       </div>
     </div>
-    <p class="text-center text-gray-400 text-xs mt-6">📸 Replace placeholders with high-quality shop & product photography</p>
+    <p class="text-center text-gray-400 text-xs mt-5">📸 Replace placeholders with high-quality shop & product photography</p>
   </div>
 </section>
 
-<!-- Wave divider -->
+<!-- wave -->
 <div style="background:#fff8fc;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 60" style="display:block;" preserveAspectRatio="none" width="100%" height="60">
-    <path fill="#fde8f3" d="M0,20 C360,60 1080,0 1440,30 L1440,60 L0,60 Z"/>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
+    <path fill="#fde8f3" d="M0,16 C360,48 1080,0 1440,24 L1440,50 L0,50 Z"/>
   </svg>
 </div>
 
-<!-- ═══════════════ LOCATION ═══════════ -->
-<section id="location" style="background:#fde8f3; overflow:visible;" class="py-28 px-5 relative">
-  <div class="dot-pattern-dark absolute inset-0 pointer-events-none"></div>
-
-  <!-- Location floating stickers -->
-  <div class="sticker sticker-pink float-a" style="--rot:-8deg; top:-18px; right:6%; z-index:10; text-align:center; padding:.75rem 1.1rem; font-size:.68rem; font-weight:700;">
-    <div style="font-size:1.1rem;">🕐</div>
-    <div style="margin-top:2px;">Open Today</div>
+<!-- ════════════════ LOCATION ════════════ -->
+<section id="location" style="background:#fde8f3;overflow:visible;" class="py-16 md:py-24 px-4 md:px-6 relative">
+  <div class="dot-pattern-pink absolute inset-0 pointer-events-none"></div>
+  <div class="sticker sticker-pink fa" style="--rot:-8deg;top:-16px;right:5%;z-index:10;text-align:center;padding:.7rem 1rem;font-size:.65rem;font-weight:700;">
+    <div style="font-size:1rem;">🕐</div><div style="margin-top:2px;">Open Today</div>
   </div>
-  <div class="sticker sticker-white float-d" style="--rot:6deg; bottom:40px; left:3%; z-index:10; font-size:.68rem; color:#d95fa3; font-weight:700; padding:.7rem 1rem;">
-    📍 Jericho Tpke
-  </div>
+  <div class="sticker sticker-white fd" style="--rot:6deg;bottom:36px;left:2%;z-index:10;font-size:.65rem;color:#d95fa3;font-weight:700;padding:.65rem .9rem;">📍 Jericho Tpke</div>
 
-  <div class="max-w-6xl mx-auto relative z-2">
-    <div class="text-center mb-14 reveal">
+  <div class="max-w-5xl mx-auto relative z-10">
+    <div class="text-center mb-10 reveal">
       <span class="section-tag">Find Us</span>
-      <h2 class="font-display text-4xl md:text-5xl font-bold mt-4 text-pink-brand">Come Visit Us</h2>
-      <p class="text-gray-400 mt-3 text-sm">Right on Jericho Turnpike — easy to find, hard to leave.</p>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-3 text-pink-brand">Come Visit Us</h2>
+      <p class="text-gray-400 mt-2 text-sm">Right on Jericho Turnpike — easy to find, hard to leave.</p>
     </div>
-    <div class="grid md:grid-cols-2 gap-10 items-start">
-      <div class="reveal">
-        <div class="map-placeholder h-80 mb-5">
-          <div class="text-5xl mb-3">📍</div>
-          <p class="font-display text-pink-brand font-bold text-lg">1916 Jericho Turnpike</p>
+
+    <div class="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-10 items-start">
+      <!-- map + address -->
+      <div class="reveal w-full">
+        <div class="map-ph w-full mb-5" style="height:240px;md:height:320px;">
+          <div style="font-size:3rem;margin-bottom:.75rem;">📍</div>
+          <p class="font-display text-pink-brand font-bold text-base md:text-lg">1916 Jericho Turnpike</p>
           <p class="text-pink-deep/60 text-sm">East Northport, NY 11731</p>
-          <a href="https://maps.google.com/?q=1916+Jericho+Turnpike+East+Northport+NY" target="_blank" class="mt-4 inline-block text-xs text-pink-brand border border-pink-brand/30 rounded-full px-4 py-2 hover:bg-pink-brand hover:text-white transition-all">Open in Google Maps ↗</a>
-          <p class="text-xs text-gray-400 mt-3">Replace with live Google Maps embed</p>
+          <a href="https://maps.google.com/?q=1916+Jericho+Turnpike+East+Northport+NY" target="_blank" class="mt-3 inline-block text-xs text-pink-brand border border-pink-brand/30 rounded-full px-4 py-2 hover:bg-pink-brand hover:text-white transition-all">Open in Google Maps ↗</a>
+          <p class="text-xs text-gray-400 mt-2">Replace with live Google Maps embed</p>
         </div>
-        <div class="bg-white rounded-2xl p-6 border border-pink-brand/10 shadow-sm">
+        <div class="bg-white rounded-2xl p-5 border border-pink-brand/10 shadow-sm">
           <div class="flex items-start gap-4">
-            <div class="text-3xl">📬</div>
+            <div style="font-size:1.8rem;">📬</div>
             <div>
-              <p class="font-display font-bold text-pink-brand text-lg">BumbleBear</p>
+              <p class="font-display font-bold text-pink-brand text-base">BumbleBear</p>
               <p class="text-gray-500 text-sm mt-1">1916 Jericho Turnpike<br>East Northport, NY 11731</p>
               <a href="tel:+15165551234" class="text-pink-brand text-sm font-medium mt-2 block">📞 (516) 555-1234</a>
             </div>
           </div>
         </div>
       </div>
-      <div class="reveal" style="transition-delay:.12s">
-        <div class="bg-white rounded-2xl p-8 border border-pink-brand/10 shadow-sm">
-          <h3 class="font-display text-2xl font-bold text-pink-brand mb-6 flex items-center gap-2">🕐 Store Hours</h3>
-          <table class="hours-table w-full text-sm rounded-xl overflow-hidden">
+
+      <!-- hours -->
+      <div class="reveal w-full" style="transition-delay:.1s;">
+        <div class="bg-white rounded-2xl p-5 md:p-8 border border-pink-brand/10 shadow-sm">
+          <h3 class="font-display text-xl md:text-2xl font-bold text-pink-brand mb-5">🕐 Store Hours</h3>
+          <table class="hours-table w-full text-sm">
             <tbody>
-              <tr class="font-medium"><td class="py-3 px-3 text-gray-700">Monday</td><td class="py-3 px-3 text-right text-pink-brand font-semibold">10:00 AM – 7:00 PM</td></tr>
-              <tr><td class="py-3 px-3 text-gray-700">Tuesday</td><td class="py-3 px-3 text-right text-pink-brand font-semibold">10:00 AM – 7:00 PM</td></tr>
-              <tr><td class="py-3 px-3 text-gray-700">Wednesday</td><td class="py-3 px-3 text-right text-pink-brand font-semibold">10:00 AM – 7:00 PM</td></tr>
-              <tr><td class="py-3 px-3 text-gray-700">Thursday</td><td class="py-3 px-3 text-right text-pink-brand font-semibold">10:00 AM – 8:00 PM</td></tr>
-              <tr><td class="py-3 px-3 text-gray-700">Friday</td><td class="py-3 px-3 text-right text-pink-brand font-semibold">10:00 AM – 8:00 PM</td></tr>
-              <tr><td class="py-3 px-3 text-gray-700">Saturday</td><td class="py-3 px-3 text-right font-bold" style="color:#d95fa3;">10:00 AM – 9:00 PM</td></tr>
-              <tr><td class="py-3 px-3 text-gray-700">Sunday</td><td class="py-3 px-3 text-right font-bold" style="color:#d95fa3;">11:00 AM – 6:00 PM</td></tr>
+              <tr><td class="text-gray-700 rounded-l">Monday</td><td class="text-right text-pink-brand font-semibold rounded-r">10 AM – 7 PM</td></tr>
+              <tr><td class="text-gray-700">Tuesday</td><td class="text-right text-pink-brand font-semibold">10 AM – 7 PM</td></tr>
+              <tr><td class="text-gray-700">Wednesday</td><td class="text-right text-pink-brand font-semibold">10 AM – 7 PM</td></tr>
+              <tr><td class="text-gray-700">Thursday</td><td class="text-right text-pink-brand font-semibold">10 AM – 8 PM</td></tr>
+              <tr><td class="text-gray-700">Friday</td><td class="text-right text-pink-brand font-semibold">10 AM – 8 PM</td></tr>
+              <tr><td class="text-gray-700">Saturday</td><td class="text-right font-bold" style="color:#d95fa3;">10 AM – 9 PM</td></tr>
+              <tr><td class="text-gray-700">Sunday</td><td class="text-right font-bold" style="color:#d95fa3;">11 AM – 6 PM</td></tr>
             </tbody>
           </table>
-          <div class="mt-6 p-4 rounded-xl flex items-center gap-3" style="background:rgba(240,137,196,.1);">
-            <span class="text-2xl">✨</span>
-            <p class="text-pink-deep text-sm"><strong>New drops</strong> arrive every Friday — follow us on Instagram <strong>@bumblebear_ny</strong> for first looks!</p>
+          <div class="mt-5 p-4 rounded-xl flex items-start gap-3" style="background:rgba(240,137,196,.1);">
+            <span style="font-size:1.4rem;">✨</span>
+            <p class="text-pink-deep text-sm"><strong>New drops</strong> every Friday — follow <strong>@bumblebear_ny</strong> on Instagram for first looks!</p>
           </div>
         </div>
       </div>
@@ -669,61 +691,70 @@
   </div>
 </section>
 
-<!-- ═══════════════ FOOTER ═══════════ -->
-<footer class="py-16 px-5 relative overflow-hidden">
-  <div class="blob w-64 h-64 opacity-15" style="background:#fff; top:-40px; left:25%;"></div>
+<!-- ════════════════ FOOTER ════════════ -->
+<footer class="py-14 px-4 md:px-6 relative overflow-hidden">
+  <div class="blob" style="width:200px;height:200px;background:#fff;opacity:.12;top:-30px;left:20%;"></div>
   <div class="dot-pattern absolute inset-0 opacity-20 pointer-events-none"></div>
-  <div class="stripe-overlay"></div>
-
-  <!-- Footer floating sticker -->
-  <div class="sticker sticker-white float-a" style="--rot:-7deg; top:90px; right:8%; z-index:10; text-align:center; padding:.8rem 1.2rem;">
-    <div class="font-script text-xl" style="color:#f089c4;">BumbleBear</div>
-    <div style="font-size:.62rem; color:#bbb; font-weight:600; letter-spacing:.06em; text-transform:uppercase; margin-top:2px;">Est. 2020 🐻</div>
+  <div class="stripes"></div>
+  <div class="sticker sticker-white fa" style="--rot:-7deg;top:-18px;right:6%;z-index:10;text-align:center;padding:.75rem 1.1rem;">
+    <div class="font-script text-lg" style="color:#f089c4;">BumbleBear</div>
+    <div style="font-size:.58rem;color:#bbb;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;">Est. 2020 🐻</div>
   </div>
 
-  <div class="max-w-4xl mx-auto text-center relative z-10">
-    <div class="mb-8">
-      <div class="font-script text-5xl text-white mb-2">BumbleBear 🐻</div>
-      <p class="text-white/70 text-sm">1916 Jericho Turnpike · East Northport, NY 11731</p>
+  <div class="max-w-2xl mx-auto text-center relative z-10">
+    <div class="mb-6">
+      <div class="font-script text-4xl md:text-5xl text-white mb-2">BumbleBear 🐻</div>
+      <p class="text-white/65 text-sm">1916 Jericho Turnpike · East Northport, NY 11731</p>
     </div>
-    <div class="bg-white/15 backdrop-blur-sm border border-white/25 rounded-3xl p-8 mb-10">
-      <h3 class="font-display text-3xl md:text-4xl font-bold text-white mb-3">Come Visit the Bear Den 🏪</h3>
-      <p class="text-white/75 mb-7 max-w-md mx-auto text-sm">Stop by any day of the week and discover what's new. We love meeting our community — walk-ins always welcome.</p>
-      <div class="flex flex-wrap justify-center gap-4">
-        <a href="tel:+15165551234" class="cta-btn text-base px-8">📞 Call (516) 555-1234</a>
-        <a href="#location" class="cta-btn-outline text-base px-8">📍 Get Directions</a>
+    <div class="bg-white/15 backdrop-blur-sm border border-white/25 rounded-2xl p-6 md:p-8 mb-8">
+      <h3 class="font-display text-2xl md:text-4xl font-bold text-white mb-3">Come Visit the Bear Den 🏪</h3>
+      <p class="text-white/70 mb-6 text-sm max-w-sm mx-auto">Stop by any day of the week and discover what's new. Walk-ins always welcome.</p>
+      <div class="btn-row justify-center">
+        <a href="tel:+15165551234" class="cta-btn">📞 Call (516) 555-1234</a>
+        <a href="#location" class="cta-outline">📍 Get Directions</a>
       </div>
     </div>
-    <div class="flex justify-center gap-6 mb-8 text-white/60 text-sm">
+    <div class="flex justify-center gap-5 mb-6 text-white/55 text-sm">
       <a href="#" class="hover:text-white transition-colors">Instagram</a>
-      <span>·</span>
-      <a href="#" class="hover:text-white transition-colors">TikTok</a>
-      <span>·</span>
-      <a href="#" class="hover:text-white transition-colors">Facebook</a>
+      <span>·</span><a href="#" class="hover:text-white transition-colors">TikTok</a>
+      <span>·</span><a href="#" class="hover:text-white transition-colors">Facebook</a>
     </div>
-    <div class="border-t border-white/15 pt-6 text-white/40 text-xs">
-      © 2025 BumbleBear · East Northport, NY · All rights reserved
-    </div>
+    <div class="border-t border-white/15 pt-5 text-white/35 text-xs">© 2025 BumbleBear · East Northport, NY · All rights reserved</div>
   </div>
 </footer>
 
 <script>
-  // ── Scroll reveal ────────────────────────────────
-  const reveals = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.12 });
-  reveals.forEach(el => io.observe(el));
+  // ── hamburger ──────────────────────────────
+  const ham  = document.getElementById('ham');
+  const menu = document.getElementById('mobile-menu');
+  ham.addEventListener('click', () => {
+    ham.classList.toggle('active');
+    menu.classList.toggle('open');
+  });
+  function closeMenu() {
+    ham.classList.remove('active');
+    menu.classList.remove('open');
+  }
+  // close on outside click
+  document.addEventListener('click', e => {
+    if (!ham.contains(e.target) && !menu.contains(e.target)) closeMenu();
+  });
 
-  // ── Hero entrance ─────────────────────────────────
+  // ── scroll reveal ──────────────────────────
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // ── GSAP hero entrance ─────────────────────
   window.addEventListener('load', () => {
-    const tl = gsap.timeline();
-    tl.from('nav',                   { y: -60, opacity: 0, duration: .7, ease: 'power3.out' })
-      .from('.hero-section h1',      { y: 50,  opacity: 0, duration: .9, ease: 'power3.out' }, '-=.3')
-      .from('.hero-section p',       { y: 30,  opacity: 0, duration: .7, ease: 'power2.out', stagger: .1 }, '-=.5')
-      .from('.hero-section a',       { scale: .9, opacity: 0, duration: .5, ease: 'back.out(1.7)', stagger: .1 }, '-=.3')
-      .from('.hero-photo-frame',     { x: 60,  opacity: 0, duration: 1,  ease: 'power3.out' }, '-=.9')
-      .from('.ticker-wrap',          { y: -20, opacity: 0, duration: .5, ease: 'power2.out' }, '-=1.2');
+    const tl = gsap.timeline({ defaults:{ ease:'power3.out' } });
+    tl.from('nav',               { y:-50, opacity:0, duration:.6 })
+      .from('.ticker-wrap',      { opacity:0, duration:.4 }, '-=.3')
+      .from('.hero-section h1',  { y:40, opacity:0, duration:.8 }, '-=.2')
+      .from('.hero-section p',   { y:24, opacity:0, duration:.6, stagger:.08 }, '-=.5')
+      .from('.hero-section a',   { scale:.9, opacity:0, duration:.45, ease:'back.out(1.7)', stagger:.1 }, '-=.4')
+      .from('.hero-photo-frame', { x:40, opacity:0, duration:.9 }, '-=.8');
   });
 </script>
 </body>
