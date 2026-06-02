@@ -124,8 +124,18 @@
     .fb  { animation:gfloatB 6s ease-in-out infinite; }
     .fc  { animation:gfloat  7s ease-in-out infinite; animation-delay:-2s; }
     .fd  { animation:gfloatB 5.5s ease-in-out infinite; animation-delay:-3s; }
-    /* hide stickers on tiny screens */
-    @media(max-width:639px){ .sticker { display:none; } }
+    /* hide on mobile */
+    @media(max-width:767px){ .sticker { display:none !important; } }
+    /* tablet: replace all hard calc() positions with safe % values */
+    @media(min-width:768px) and (max-width:1199px){
+      .sk-hero-open  { top:5% !important; right:2% !important; left:auto !important; }
+      .sk-hero-drop  { top:5% !important; left:2% !important; right:auto !important; }
+      .sk-hero-est   { bottom:-22px !important; left:3% !important; right:auto !important; }
+      .sk-hero-star  { bottom:8% !important; right:3% !important; left:auto !important; }
+      .sk-about-li   { top:-16px !important; left:3% !important; right:auto !important; }
+      .sk-about-est  { bottom:-22px !important; left:3% !important; right:auto !important; }
+      .sk-about-trend{ bottom:-14px !important; right:3% !important; left:auto !important; }
+    }
 
     /* ── HERO ── */
     .hero-section {
@@ -135,6 +145,15 @@
     .hero-photo-frame {
       border:3px solid rgba(255,255,255,.45); border-radius:1.5rem; overflow:hidden;
       box-shadow:0 20px 60px rgba(217,95,163,.4);
+    }
+    /* tablet hero: reduce gap, make photo shorter so it doesn't overflow */
+    @media(min-width:768px) and (max-width:1023px){
+      .hero-desktop-grid { gap:2rem !important; }
+      .hero-photo-inner  { height:340px !important; }
+      .hero-title        { font-size:clamp(3.5rem,8vw,5rem) !important; }
+    }
+    @media(min-width:1024px){
+      .hero-photo-inner  { height:460px; }
     }
 
     /* ── SERVICE CARDS ── */
@@ -157,17 +176,25 @@
 
     /* mobile horizontal scroll for services */
     .svc-scroll {
-      display:flex; gap:1rem; overflow-x:auto; padding-bottom:1rem;
+      display:flex; gap:1rem; overflow-x:auto; padding-bottom:1.25rem; padding-left:.25rem;
       scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
+      scrollbar-width:none; align-items:stretch;
     }
     .svc-scroll::-webkit-scrollbar { display:none; }
     .svc-scroll .svc-card {
-      min-width:80vw; max-width:300px; flex-shrink:0;
+      min-width:82vw; max-width:320px; flex-shrink:0;
       scroll-snap-align:start; padding:1.4rem;
+      display:flex; flex-direction:column;
+    }
+    .svc-card p.desc { flex:1; } /* push chips to bottom */
+    @media(min-width:640px){
+      .svc-scroll .svc-card { min-width:72vw; }
     }
     @media(min-width:768px){
-      .svc-scroll { display:grid; grid-template-columns:repeat(2,1fr); overflow:visible; }
+      .svc-scroll {
+        display:grid; grid-template-columns:repeat(2,1fr);
+        overflow:visible; padding-bottom:0; padding-left:0; align-items:stretch;
+      }
       .svc-scroll .svc-card { min-width:unset; max-width:unset; padding:1.75rem; }
     }
     @media(min-width:1024px){
@@ -181,13 +208,17 @@
     }
 
     /* ── GALLERY ── */
-    /* mobile: 2 col uniform grid; desktop: masonry-ish */
     .gallery-grid {
       display:grid; grid-template-columns:1fr 1fr; gap:.75rem;
       grid-auto-rows:140px;
     }
-    @media(min-width:640px){ .gallery-grid { grid-auto-rows:170px; } }
-    @media(min-width:768px){ .gallery-grid { grid-template-columns:repeat(4,1fr); grid-auto-rows:180px; } }
+    @media(min-width:540px){ .gallery-grid { grid-auto-rows:170px; } }
+    @media(min-width:768px){
+      .gallery-grid { grid-template-columns:repeat(4,1fr); grid-auto-rows:160px; }
+      .gallery-grid .g-item:nth-child(1),
+      .gallery-grid .g-item:nth-child(4) { grid-row:span 2; }
+    }
+    @media(min-width:1024px){ .gallery-grid { grid-auto-rows:180px; } }
     .g-item {
       border-radius:1.1rem; overflow:hidden;
       background:linear-gradient(145deg,#fde8f3,#f9c4e1);
@@ -196,7 +227,6 @@
       transition:transform .3s,box-shadow .3s; cursor:pointer;
     }
     .g-item:hover { transform:scale(1.04); box-shadow:0 16px 40px rgba(240,137,196,.4); }
-    .g-tall { grid-row:span 2; }
 
     /* ── HOURS table ── */
     .hours-table tr:nth-child(even) { background:rgba(240,137,196,.08); }
@@ -207,7 +237,10 @@
       background:linear-gradient(135deg,#fde8f3,#f9c4e1);
       border:2px solid rgba(240,137,196,.4); border-radius:1.25rem;
       display:flex; flex-direction:column; align-items:center; justify-content:center;
+      height:240px;
     }
+    @media(min-width:768px){ .map-ph { height:300px; } }
+    @media(min-width:1024px){ .map-ph { height:320px; } }
 
     /* ── BUTTONS ── */
     .cta-btn {
@@ -258,6 +291,20 @@
 
     /* ── footer ── */
     footer { background:linear-gradient(135deg,#d95fa3,#f089c4); position:relative; overflow:visible; }
+
+    /* ── global tablet safety ── */
+    /* ensure no section causes horizontal scroll */
+    section { max-width:100vw; }
+    /* tablet: add side breathing room to inner containers */
+    @media(min-width:768px) and (max-width:1023px){
+      .max-w-5xl { padding-left:1.5rem; padding-right:1.5rem; }
+      /* footer sticker safe on tablet */
+      footer .sticker { right:3% !important; left:auto !important; }
+    }
+    /* prevent any absolute-positioned deco from causing scroll */
+    .hero-section, .about-section, #services, #gallery, #location, footer {
+      overflow-x:clip;
+    }
 
     ::-webkit-scrollbar { width:5px; }
     ::-webkit-scrollbar-track { background:#fff8fc; }
@@ -337,17 +384,17 @@
   <div class="stripes"></div>
 
   <!-- floating stickers (hidden on mobile via CSS) -->
-  <div class="sticker sticker-white fa" style="--rot:-8deg;top:14%;right:calc(50% - 390px);font-size:.7rem;font-weight:700;z-index:30;">
+  <div class="sticker sticker-white fa sk-hero-open" style="--rot:-8deg;top:14%;right:calc(50% - 390px);font-size:.7rem;font-weight:700;z-index:30;">
     <div style="text-align:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;"></span></div><div>Open Today</div>
   </div>
-  <div class="sticker sticker-soft fc" style="--rot:7deg;top:9%;right:calc(50% - 530px);font-size:.68rem;font-weight:700;color:#c0508a;z-index:30;border:2px solid rgba(240,137,196,.25);">
+  <div class="sticker sticker-soft fc sk-hero-drop" style="--rot:7deg;top:9%;right:calc(50% - 530px);font-size:.68rem;font-weight:700;color:#c0508a;z-index:30;border:2px solid rgba(240,137,196,.25);">
     <span style="font-size:.9rem;">🔥</span> New Drop!
   </div>
-  <div class="sticker sticker-white fd" style="--rot:-4deg;bottom:-24px;left:4%;z-index:30;text-align:center;padding:.9rem 1.3rem;">
+  <div class="sticker sticker-white fd sk-hero-est" style="--rot:-4deg;bottom:-24px;left:4%;z-index:30;text-align:center;padding:.9rem 1.3rem;">
     <div class="font-script text-xl" style="color:#f089c4;">Est. 2020</div>
     <div style="font-size:.6rem;color:#bbb;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;">East Northport's Own</div>
   </div>
-  <div class="sticker sticker-pink fb" style="--rot:5deg;bottom:15%;left:calc(50% - 20px);text-align:center;z-index:30;min-width:86px;font-size:.65rem;font-weight:700;">
+  <div class="sticker sticker-pink fb sk-hero-star" style="--rot:5deg;bottom:15%;left:calc(50% - 20px);text-align:center;z-index:30;min-width:86px;font-size:.65rem;font-weight:700;">
     <div style="font-size:1.2rem;">⭐</div><div style="margin-top:2px;">5-Star Shop</div>
   </div>
 
@@ -379,10 +426,10 @@
     </div>
 
     <!-- DESKTOP: side by side -->
-    <div class="hidden md:grid md:grid-cols-2 gap-12 items-center">
+    <div class="hero-desktop-grid hidden md:grid md:grid-cols-2 gap-12 items-center">
       <div>
         <div class="star-badge mb-5">⭐ East Northport's Cutest Shop</div>
-        <h1 class="font-script text-7xl lg:text-8xl text-white leading-none drop-shadow-lg mb-2">Bumble<br>Bear</h1>
+        <h1 class="hero-title font-script text-7xl lg:text-8xl text-white leading-none drop-shadow-lg mb-2">Bumble<br>Bear</h1>
         <p class="font-display italic text-pink-100 text-xl mb-4">Where every visit feels like finding treasure.</p>
         <p class="text-white/80 text-base leading-relaxed mb-8 max-w-md">Your cozy local destination for squishies, collectables, trending toys, Legos, dolls & so much more — tucked right here in East Northport, NY.</p>
         <div class="btn-row mb-6">
@@ -394,7 +441,7 @@
         </div>
       </div>
       <div class="hero-photo-frame">
-        <div style="background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06));height:460px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div class="hero-photo-inner" style="background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06));height:460px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <div style="font-size:4rem;margin-bottom:1rem;">🏪</div>
           <p class="font-display text-white/80 text-lg italic">Shop Interior Photo</p>
           <p class="text-white/50 text-sm mt-1">Replace with high-res shop photo</p>
@@ -516,14 +563,14 @@
   <div class="ring" style="width:200px;height:200px;bottom:8%;right:8%;opacity:.18;"></div>
 
   <!-- stickers desktop only -->
-  <div class="sticker sticker-white fb" style="--rot:6deg;top:-18px;left:10%;z-index:30;text-align:center;padding:.75rem 1.1rem;">
+  <div class="sticker sticker-white fb sk-about-li" style="--rot:6deg;top:-18px;left:10%;z-index:30;text-align:center;padding:.75rem 1.1rem;">
     <div style="font-size:1.2rem;">📍</div>
     <div style="font-size:.62rem;color:#d95fa3;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:.06em;">Long Island</div>
   </div>
-  <div class="sticker sticker-pink fd" style="--rot:-7deg;bottom:-14px;right:8%;z-index:30;text-align:center;padding:.75rem 1.1rem;min-width:96px;">
+  <div class="sticker sticker-pink fd sk-about-trend" style="--rot:-7deg;bottom:-14px;right:8%;z-index:30;text-align:center;padding:.75rem 1.1rem;min-width:96px;">
     <div style="font-size:1rem;">✨</div><div style="font-size:.62rem;font-weight:700;margin-top:2px;">Always Trending</div>
   </div>
-  <div class="sticker sticker-white fa" style="--rot:-5deg;bottom:50px;left:calc(50% - 290px);z-index:30;text-align:center;padding:.9rem 1.3rem;">
+  <div class="sticker sticker-white fa sk-about-est" style="--rot:-5deg;bottom:50px;left:4%;z-index:30;text-align:center;padding:.9rem 1.3rem;">
     <div class="font-script text-xl" style="color:#f089c4;">Est. 2020</div>
     <div style="font-size:.6rem;color:#bbb;margin-top:2px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">East Northport's Own</div>
   </div>
@@ -552,9 +599,9 @@
     </div>
 
     <!-- DESKTOP: side by side -->
-    <div class="hidden md:grid md:grid-cols-2 gap-14 items-center">
+    <div class="hidden md:grid md:grid-cols-2 gap-8 lg:gap-14 items-center">
       <div class="relative reveal">
-        <div class="rounded-3xl overflow-hidden border-2 border-white/28 shadow-2xl" style="height:420px;background:rgba(255,255,255,.12);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;">
+        <div class="rounded-3xl overflow-hidden border-2 border-white/28 shadow-2xl" style="height:clamp(300px,40vw,420px);background:rgba(255,255,255,.12);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;">
           <div class="text-center"><div style="font-size:4rem;margin-bottom:.75rem;">🛍️</div><p class="text-white/70 font-display italic">Shop Photo Placeholder</p></div>
         </div>
       </div>
@@ -598,8 +645,7 @@
       <p class="text-gray-400 mt-3 max-w-lg mx-auto text-sm">A peek at our colorful shelves, trending picks, and the vibe that makes BumbleBear unlike anywhere else on Long Island.</p>
     </div>
     <div class="gallery-grid reveal">
-      <!-- tall items only on md+ -->
-      <div class="g-item md:g-tall" style="grid-row:span 1;" class="reveal">
+      <div class="g-item reveal">
         <div class="text-center p-3"><div style="font-size:2.5rem;margin-bottom:.3rem;">🧸</div><p class="text-pink-deep/50 text-xs font-medium">Squishy Wall</p></div>
       </div>
       <div class="g-item reveal">
@@ -647,7 +693,7 @@
     <div class="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-10 items-start">
       <!-- map + address -->
       <div class="reveal w-full">
-        <div class="map-ph w-full mb-5" style="height:240px;md:height:320px;">
+        <div class="map-ph w-full mb-5">
           <div style="font-size:3rem;margin-bottom:.75rem;">📍</div>
           <p class="font-display text-pink-brand font-bold text-base md:text-lg">1916 Jericho Turnpike</p>
           <p class="text-pink-deep/60 text-sm">East Northport, NY 11731</p>
