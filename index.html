@@ -28,8 +28,8 @@
   </script>
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html { scroll-behavior:smooth; }
-    body { font-family:'DM Sans',sans-serif; background:#fff8fc; color:#fff; overflow-x:hidden; }
+    html { scroll-behavior:smooth; overflow-x:hidden; max-width:100%; }
+    body { font-family:'DM Sans',sans-serif; background:#fff8fc; color:#fff; overflow-x:hidden; max-width:100%; position:relative; }
 
     /* noise */
     body::after {
@@ -42,6 +42,7 @@
     .blob {
       position:absolute; border-radius:60% 40% 70% 30%/40% 50% 60% 50%;
       filter:blur(48px); animation:morph 10s ease-in-out infinite; pointer-events:none;
+      max-width:50vw; /* never wider than half the screen */
     }
     @keyframes morph {
       0%,100%{border-radius:60% 40% 70% 30%/40% 50% 60% 50%}
@@ -58,9 +59,6 @@
       position:absolute; inset:0; pointer-events:none;
       background-image:repeating-linear-gradient(-45deg,transparent 0,transparent 8px,rgba(255,255,255,.04) 8px,rgba(255,255,255,.04) 10px);
     }
-
-    /* ── rings ── */
-    .ring { position:absolute; border-radius:50%; border:2px solid rgba(255,255,255,.14); pointer-events:none; }
 
     /* ── TICKER ── */
     .ticker-wrap {
@@ -90,7 +88,6 @@
       -webkit-backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,.2);
     }
     .nav-inner { max-width:1152px; margin:auto; padding:.7rem 1.2rem; display:flex; align-items:center; justify-content:space-between; }
-    /* mobile menu */
     #mobile-menu {
       display:none; flex-direction:column; gap:0;
       background:rgba(217,95,163,.97); backdrop-filter:blur(12px);
@@ -124,9 +121,7 @@
     .fb  { animation:gfloatB 6s ease-in-out infinite; }
     .fc  { animation:gfloat  7s ease-in-out infinite; animation-delay:-2s; }
     .fd  { animation:gfloatB 5.5s ease-in-out infinite; animation-delay:-3s; }
-    /* hide on mobile */
     @media(max-width:767px){ .sticker { display:none !important; } }
-    /* tablet: replace all hard calc() positions with safe % values */
     @media(min-width:768px) and (max-width:1199px){
       .sk-hero-open  { top:5% !important; right:2% !important; left:auto !important; }
       .sk-hero-drop  { top:5% !important; left:2% !important; right:auto !important; }
@@ -146,7 +141,6 @@
       border:3px solid rgba(255,255,255,.45); border-radius:1.5rem; overflow:hidden;
       box-shadow:0 20px 60px rgba(217,95,163,.4);
     }
-    /* tablet hero: reduce gap, make photo shorter so it doesn't overflow */
     @media(min-width:768px) and (max-width:1023px){
       .hero-desktop-grid { gap:2rem !important; }
       .hero-photo-inner  { height:340px !important; }
@@ -174,7 +168,6 @@
       font-size:1.5rem; box-shadow:0 6px 18px rgba(217,95,163,.3); flex-shrink:0;
     }
 
-    /* mobile horizontal scroll for services */
     .svc-scroll {
       display:flex; gap:1rem; overflow-x:auto; padding-bottom:1.25rem; padding-left:.25rem;
       scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
@@ -186,7 +179,7 @@
       scroll-snap-align:start; padding:1.4rem;
       display:flex; flex-direction:column;
     }
-    .svc-card p.desc { flex:1; } /* push chips to bottom */
+    .svc-card p.desc { flex:1; }
     @media(min-width:640px){
       .svc-scroll .svc-card { min-width:72vw; }
     }
@@ -233,14 +226,12 @@
     .hours-table td { padding:.55rem .75rem; }
 
     /* ── MAP ── */
-    .map-ph {
-      background:linear-gradient(135deg,#fde8f3,#f9c4e1);
+    .map-embed {
       border:2px solid rgba(240,137,196,.4); border-radius:1.25rem;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      height:240px;
+      overflow:hidden; width:100%;
     }
-    @media(min-width:768px){ .map-ph { height:300px; } }
-    @media(min-width:1024px){ .map-ph { height:320px; } }
+    @media(min-width:768px){ .map-embed { height:300px; } }
+    @media(min-width:1024px){ .map-embed { height:320px; } }
 
     /* ── BUTTONS ── */
     .cta-btn {
@@ -255,7 +246,6 @@
       transition:all .25s; font-weight:500; letter-spacing:.03em; font-size:.95rem;
     }
     .cta-outline:hover { background:rgba(255,255,255,.15); border-color:#fff; transform:translateY(-2px); }
-    /* full-width CTAs on mobile */
     .btn-row { display:flex; flex-wrap:wrap; gap:.75rem; }
     @media(max-width:479px){ .btn-row a { width:100%; text-align:center; } }
 
@@ -292,18 +282,26 @@
     /* ── footer ── */
     footer { background:linear-gradient(135deg,#d95fa3,#f089c4); position:relative; overflow:visible; }
 
-    /* ── global tablet safety ── */
-    /* ensure no section causes horizontal scroll */
-    section { max-width:100vw; }
-    /* tablet: add side breathing room to inner containers */
-    @media(min-width:768px) and (max-width:1023px){
-      .max-w-5xl { padding-left:1.5rem; padding-right:1.5rem; }
-      /* footer sticker safe on tablet */
-      footer .sticker { right:3% !important; left:auto !important; }
-    }
-    /* prevent any absolute-positioned deco from causing scroll */
+    /* ── global overflow lock ── */
+    html, body { overflow-x:hidden; }
+    section, nav, footer { max-width:100%; }
     .hero-section, .about-section, #services, #gallery, #location, footer {
       overflow-x:clip;
+    }
+    /* wave divider wrappers */
+    .wave-divider { overflow:hidden; max-width:100%; line-height:0; }
+    /* about section: override overflow:visible so blobs don't escape on mobile */
+    @media(max-width:767px){
+      .about-section { overflow:hidden !important; }
+    }
+    /* service scroll: prevent the flex container from widening the page */
+    @media(max-width:767px){
+      .svc-scroll { max-width:100%; width:100%; }
+    }
+
+    @media(min-width:768px) and (max-width:1023px){
+      .max-w-5xl { padding-left:1.5rem; padding-right:1.5rem; }
+      footer .sticker { right:3% !important; left:auto !important; }
     }
 
     ::-webkit-scrollbar { width:5px; }
@@ -317,30 +315,26 @@
 <nav>
   <div class="nav-inner">
     <a href="#hero" class="font-script text-xl text-white tracking-wide">BumbleBear 🐻</a>
-    <!-- desktop links -->
     <div class="hidden md:flex gap-6 text-white text-sm font-medium">
       <a href="#services" class="hover:text-pink-100 transition-colors">Services</a>
       <a href="#about"    class="hover:text-pink-100 transition-colors">About</a>
       <a href="#gallery"  class="hover:text-pink-100 transition-colors">Gallery</a>
       <a href="#location" class="hover:text-pink-100 transition-colors">Visit</a>
     </div>
-    <!-- desktop CTA -->
-    <a href="tel:+15165551234" class="hidden md:inline-block cta-btn text-sm py-2 px-5">📞 Call Us</a>
-    <!-- mobile: phone icon + hamburger -->
+    <a href="tel:+10000000000" class="hidden md:inline-block cta-btn text-sm py-2 px-5">📞 Call Us</a>
     <div class="flex md:hidden items-center gap-3">
-      <a href="tel:+15165551234" class="text-white text-xl">📞</a>
+      <a href="tel:+10000000000" class="text-white text-xl">📞</a>
       <button class="hamburger" id="ham" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
-  <!-- mobile dropdown -->
   <div id="mobile-menu">
     <a href="#services" onclick="closeMenu()">Services</a>
     <a href="#about"    onclick="closeMenu()">About</a>
     <a href="#gallery"  onclick="closeMenu()">Gallery</a>
     <a href="#location" onclick="closeMenu()">Visit Us</a>
-    <a href="tel:+15165551234" style="color:#fff;font-weight:700;">📞 (516) 555-1234</a>
+    <a href="tel:+10000000000" style="color:#fff;font-weight:700;">📞 (000) 000-0000</a>
   </div>
 </nav>
 
@@ -358,8 +352,7 @@
     <span class="ticker-item"><span class="tick-dot"></span>TikTok Faves</span>
     <span class="ticker-item"><span class="tick-dot"></span>Blind Boxes</span>
     <span class="ticker-item"><span class="tick-dot"></span>Vinyl Figures</span>
-    <span class="ticker-item"><span class="tick-dot"></span>1916 Jericho Tpke</span>
-    <!-- duplicate for seamless loop -->
+    <span class="ticker-item"><span class="tick-dot"></span>307 Claypitts Rd</span>
     <span class="ticker-item"><span class="tick-dot"></span>Squishies</span>
     <span class="ticker-item"><span class="tick-dot"></span>Collectables</span>
     <span class="ticker-item"><span class="tick-dot"></span>Trending Toys</span>
@@ -371,19 +364,16 @@
     <span class="ticker-item"><span class="tick-dot"></span>TikTok Faves</span>
     <span class="ticker-item"><span class="tick-dot"></span>Blind Boxes</span>
     <span class="ticker-item"><span class="tick-dot"></span>Vinyl Figures</span>
-    <span class="ticker-item"><span class="tick-dot"></span>1916 Jericho Tpke</span>
+    <span class="ticker-item"><span class="tick-dot"></span>307 Claypitts Rd</span>
   </div>
 </div>
 
 <!-- ════════════════ HERO ════════════════ -->
 <section id="hero" class="hero-section dot-pattern">
-  <!-- bg deco -->
   <div class="blob" style="width:260px;height:260px;background:#fde8f3;opacity:.22;top:-60px;left:-60px;"></div>
   <div class="blob" style="width:200px;height:200px;background:#fff;opacity:.12;bottom:30px;right:-40px;animation-delay:-4s;"></div>
-
   <div class="stripes"></div>
 
-  <!-- floating stickers (hidden on mobile via CSS) -->
   <div class="sticker sticker-white fa sk-hero-open" style="--rot:-8deg;top:14%;right:calc(50% - 390px);font-size:.7rem;font-weight:700;z-index:30;">
     <div style="text-align:center;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;"></span></div><div>Open Today</div>
   </div>
@@ -391,26 +381,24 @@
     <span style="font-size:.9rem;">🔥</span> New Drop!
   </div>
   <div class="sticker sticker-white fd sk-hero-est" style="--rot:-4deg;bottom:-24px;left:4%;z-index:30;text-align:center;padding:.9rem 1.3rem;">
-    <div class="font-script text-xl" style="color:#f089c4;">Est. 2020</div>
+    <div class="font-script text-xl" style="color:#f089c4;">Est. 2025</div>
     <div style="font-size:.6rem;color:#bbb;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;">East Northport's Own</div>
   </div>
   <div class="sticker sticker-pink fb sk-hero-star" style="--rot:5deg;bottom:15%;left:calc(50% - 20px);text-align:center;z-index:30;min-width:86px;font-size:.65rem;font-weight:700;">
-    <div style="font-size:1.2rem;">⭐</div><div style="margin-top:2px;">5-Star Shop</div>
+    <div style="font-size:1.2rem;">⭐</div><div style="margin-top:2px;">4.6-Star Shop</div>
   </div>
 
   <div class="max-w-5xl mx-auto px-5 py-14 md:py-20 relative z-10">
-    <!-- MOBILE: stacked, centered -->
+    <!-- MOBILE -->
     <div class="flex flex-col items-center text-center md:hidden gap-6">
-      <div class="star-badge">⭐ East Northport's Cutest Shop</div>
+      <div class="star-badge">⭐ 4.6 · East Northport's Cutest Shop</div>
       <h1 class="font-script text-6xl text-white drop-shadow-lg leading-none">Bumble<br>Bear</h1>
       <p class="font-display italic text-pink-100 text-lg">Where every visit feels like finding treasure.</p>
       <p class="text-white/80 text-sm leading-relaxed max-w-xs">Your cozy local destination for squishies, collectables, trending toys, Legos, dolls & more — right here in East Northport, NY.</p>
-      <!-- info chips row -->
       <div class="flex gap-3 text-white/70 text-xs flex-wrap justify-center">
         <span class="bg-white/15 rounded-full px-3 py-1">🕐 Open 7 Days</span>
-        <span class="bg-white/15 rounded-full px-3 py-1">📍 1916 Jericho Tpke</span>
+        <span class="bg-white/15 rounded-full px-3 py-1">📍 307 Claypitts Rd</span>
       </div>
-      <!-- hero photo -->
       <div class="hero-photo-frame w-full">
         <div style="background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06));height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <div style="font-size:3rem;margin-bottom:.5rem;">🏪</div>
@@ -418,26 +406,25 @@
           <p class="text-white/45 text-xs mt-1">Replace with high-res shop photo</p>
         </div>
       </div>
-      <!-- CTAs -->
       <div class="btn-row w-full justify-center">
         <a href="#services" class="cta-btn">✨ View Services</a>
-        <a href="tel:+15165551234" class="cta-outline">📞 (516) 555-1234</a>
+        <a href="tel:+10000000000" class="cta-outline">📞 (000) 000-0000</a>
       </div>
     </div>
 
-    <!-- DESKTOP: side by side -->
+    <!-- DESKTOP -->
     <div class="hero-desktop-grid hidden md:grid md:grid-cols-2 gap-12 items-center">
       <div>
-        <div class="star-badge mb-5">⭐ East Northport's Cutest Shop</div>
+        <div class="star-badge mb-5">⭐ 4.6 · East Northport's Cutest Shop</div>
         <h1 class="hero-title font-script text-7xl lg:text-8xl text-white leading-none drop-shadow-lg mb-2">Bumble<br>Bear</h1>
         <p class="font-display italic text-pink-100 text-xl mb-4">Where every visit feels like finding treasure.</p>
         <p class="text-white/80 text-base leading-relaxed mb-8 max-w-md">Your cozy local destination for squishies, collectables, trending toys, Legos, dolls & so much more — tucked right here in East Northport, NY.</p>
         <div class="btn-row mb-6">
           <a href="#services" class="cta-btn">✨ View Services</a>
-          <a href="tel:+15165551234" class="cta-outline">📞 (516) 555-1234</a>
+          <a href="tel:+10000000000" class="cta-outline">📞 (000) 000-0000</a>
         </div>
         <div class="flex items-center gap-4 text-white/65 text-sm">
-          <span>🕐 Open 7 Days</span><span>•</span><span>📍 1916 Jericho Tpke</span>
+          <span>🕐 Open 7 Days</span><span>•</span><span>📍 307 Claypitts Rd</span>
         </div>
       </div>
       <div class="hero-photo-frame">
@@ -452,16 +439,15 @@
 </section>
 
 <!-- wave -->
-<div style="background:linear-gradient(135deg,#f089c4,#d95fa3);margin-bottom:-2px;">
+<div class="wave-divider" style="background:linear-gradient(135deg,#f089c4,#d95fa3);margin-bottom:-2px;">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
     <path fill="#fff8fc" d="M0,30 C360,60 1080,0 1440,30 L1440,50 L0,50 Z"/>
   </svg>
 </div>
 
 <!-- ════════════════ SERVICES ════════════ -->
-<section id="services" class="py-16 md:py-24 px-4 md:px-6 relative" style="background:#fff8fc;overflow:visible;">
+<section id="services" class="py-16 md:py-24 px-4 md:px-6 relative" style="background:#fff8fc;overflow-x:clip;overflow-y:visible;">
   <div class="dot-pattern-pink absolute inset-0 pointer-events-none"></div>
-  <!-- stickers desktop only -->
   <div class="sticker sticker-pink fa" style="--rot:-10deg;top:-16px;right:7%;z-index:10;font-size:.65rem;font-weight:700;text-align:center;padding:.6rem .9rem;">
     <div style="font-size:1rem;">🧸</div><div style="margin-top:2px;">500+ Items</div>
   </div>
@@ -474,9 +460,7 @@
       <p class="text-gray-400 mt-3 max-w-lg mx-auto text-sm">From viral TikTok finds to timeless childhood favorites — always refreshed with the latest drops.</p>
     </div>
 
-    <!-- mobile: horizontal scroll  |  tablet+: grid -->
     <div class="svc-scroll reveal">
-
       <div class="svc-card">
         <div class="flex items-start gap-4 mb-4">
           <div class="icon-wrap">🧸</div>
@@ -543,26 +527,23 @@
         </div>
       </div>
     </div>
-    <!-- mobile scroll hint -->
     <p class="text-center text-pink-brand/50 text-xs mt-4 md:hidden">← swipe to see more →</p>
   </div>
 </section>
 
 <!-- wave -->
-<div style="background:#fff8fc;margin-bottom:-2px;">
+<div class="wave-divider" style="background:#fff8fc;margin-bottom:-2px;">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
     <path fill="#f089c4" d="M0,16 C360,-16 1080,46 1440,16 L1440,50 L0,50 Z"/>
   </svg>
 </div>
 
 <!-- ════════════════ ABOUT ════════════════ -->
-<section id="about" class="about-section dot-pattern py-16 md:py-24 px-4 md:px-6" style="overflow:visible;">
+<section id="about" class="about-section dot-pattern py-16 md:py-24 px-4 md:px-6" style="overflow-x:clip;overflow-y:visible;">
   <div class="blob" style="width:280px;height:280px;background:#fff;opacity:.14;top:0;right:-30px;animation-delay:-2s;"></div>
   <div class="blob" style="width:180px;height:180px;background:#fde8f3;opacity:.15;bottom:0;left:-30px;animation-delay:-5s;"></div>
   <div class="stripes"></div>
-  <div class="ring" style="width:200px;height:200px;bottom:8%;right:8%;opacity:.18;"></div>
 
-  <!-- stickers desktop only -->
   <div class="sticker sticker-white fb sk-about-li" style="--rot:6deg;top:-18px;left:10%;z-index:30;text-align:center;padding:.75rem 1.1rem;">
     <div style="font-size:1.2rem;">📍</div>
     <div style="font-size:.62rem;color:#d95fa3;font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:.06em;">Long Island</div>
@@ -571,12 +552,12 @@
     <div style="font-size:1rem;">✨</div><div style="font-size:.62rem;font-weight:700;margin-top:2px;">Always Trending</div>
   </div>
   <div class="sticker sticker-white fa sk-about-est" style="--rot:-5deg;bottom:50px;left:4%;z-index:30;text-align:center;padding:.9rem 1.3rem;">
-    <div class="font-script text-xl" style="color:#f089c4;">Est. 2020</div>
+    <div class="font-script text-xl" style="color:#f089c4;">Est. 2025</div>
     <div style="font-size:.6rem;color:#bbb;margin-top:2px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">East Northport's Own</div>
   </div>
 
   <div class="max-w-5xl mx-auto relative z-10">
-    <!-- MOBILE: stacked, copy first -->
+    <!-- MOBILE -->
     <div class="flex flex-col gap-8 md:hidden">
       <div class="reveal text-center">
         <span class="section-tag tag-white">Our Story</span>
@@ -584,21 +565,19 @@
         <p class="text-white/85 text-sm leading-relaxed mb-3">BumbleBear was born from a simple obsession: finding the coolest, most sought-after items before everyone else does. Rooted right here in East Northport, Long Island.</p>
         <p class="text-white/80 text-sm leading-relaxed">We track what's trending — on TikTok, YouTube, and beyond — and make sure our shelves reflect what kids, collectors, and curious adults actually want.</p>
       </div>
-      <!-- stat row mobile -->
       <div class="reveal flex justify-center gap-6">
         <div class="text-center"><p class="font-display text-2xl font-bold text-white">500+</p><p class="text-white/55 text-xs">Products</p></div>
         <div class="w-px bg-white/20"></div>
         <div class="text-center"><p class="font-display text-2xl font-bold text-white">7</p><p class="text-white/55 text-xs">Days/Week</p></div>
         <div class="w-px bg-white/20"></div>
-        <div class="text-center"><p class="font-display text-2xl font-bold text-white">★ 5.0</p><p class="text-white/55 text-xs">Rating</p></div>
+        <div class="text-center"><p class="font-display text-2xl font-bold text-white">★ 4.6</p><p class="text-white/55 text-xs">Rating</p></div>
       </div>
-      <!-- photo mobile -->
       <div class="reveal rounded-2xl overflow-hidden border-2 border-white/25 shadow-xl" style="height:220px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;">
         <div class="text-center"><div style="font-size:3rem;margin-bottom:.5rem;">🛍️</div><p class="text-white/65 font-display italic text-sm">Shop Photo Placeholder</p></div>
       </div>
     </div>
 
-    <!-- DESKTOP: side by side -->
+    <!-- DESKTOP -->
     <div class="hidden md:grid md:grid-cols-2 gap-8 lg:gap-14 items-center">
       <div class="relative reveal">
         <div class="rounded-3xl overflow-hidden border-2 border-white/28 shadow-2xl" style="height:clamp(300px,40vw,420px);background:rgba(255,255,255,.12);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;">
@@ -616,7 +595,7 @@
           <div class="stat-divider"></div>
           <div class="text-center"><p class="font-display text-3xl font-bold text-white">7</p><p class="text-white/55 text-sm">Days a Week</p></div>
           <div class="stat-divider"></div>
-          <div class="text-center"><p class="font-display text-3xl font-bold text-white">★ 5.0</p><p class="text-white/55 text-sm">Community Rating</p></div>
+          <div class="text-center"><p class="font-display text-3xl font-bold text-white">★ 4.6</p><p class="text-white/55 text-sm">Community Rating</p></div>
         </div>
       </div>
     </div>
@@ -624,14 +603,14 @@
 </section>
 
 <!-- wave -->
-<div style="background:#f089c4;margin-bottom:-2px;">
+<div class="wave-divider" style="background:#f089c4;margin-bottom:-2px;">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
     <path fill="#fff8fc" d="M0,32 C480,0 960,50 1440,18 L1440,50 L0,50 Z"/>
   </svg>
 </div>
 
 <!-- ════════════════ GALLERY ════════════ -->
-<section id="gallery" class="py-16 md:py-24 px-4 md:px-6 relative" style="background:#fff8fc;overflow:visible;">
+<section id="gallery" class="py-16 md:py-24 px-4 md:px-6 relative" style="background:#fff8fc;overflow-x:clip;overflow-y:visible;">
   <div class="dot-pattern-pink absolute inset-0 pointer-events-none"></div>
   <div class="sticker sticker-pink fb" style="--rot:9deg;top:-14px;left:4%;z-index:10;font-size:.65rem;font-weight:700;padding:.6rem .9rem;text-align:center;">
     <div style="font-size:.95rem;">📸</div><div style="margin-top:2px;">Photo Wall</div>
@@ -669,44 +648,45 @@
 </section>
 
 <!-- wave -->
-<div style="background:#fff8fc;">
+<div class="wave-divider" style="background:#fff8fc;">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 50" style="display:block;" preserveAspectRatio="none" width="100%" height="50">
     <path fill="#fde8f3" d="M0,16 C360,48 1080,0 1440,24 L1440,50 L0,50 Z"/>
   </svg>
 </div>
 
 <!-- ════════════════ LOCATION ════════════ -->
-<section id="location" style="background:#fde8f3;overflow:visible;" class="py-16 md:py-24 px-4 md:px-6 relative">
+<section id="location" style="background:#fde8f3;overflow-x:clip;overflow-y:visible;" class="py-16 md:py-24 px-4 md:px-6 relative">
   <div class="dot-pattern-pink absolute inset-0 pointer-events-none"></div>
   <div class="sticker sticker-pink fa" style="--rot:-8deg;top:-16px;right:5%;z-index:10;text-align:center;padding:.7rem 1rem;font-size:.65rem;font-weight:700;">
     <div style="font-size:1rem;">🕐</div><div style="margin-top:2px;">Open Today</div>
   </div>
-  <div class="sticker sticker-white fd" style="--rot:6deg;bottom:36px;left:2%;z-index:10;font-size:.65rem;color:#d95fa3;font-weight:700;padding:.65rem .9rem;">📍 Jericho Tpke</div>
+  <div class="sticker sticker-white fd" style="--rot:6deg;bottom:36px;left:2%;z-index:10;font-size:.65rem;color:#d95fa3;font-weight:700;padding:.65rem .9rem;">📍 Claypitts Rd</div>
 
   <div class="max-w-5xl mx-auto relative z-10">
     <div class="text-center mb-10 reveal">
       <span class="section-tag">Find Us</span>
       <h2 class="font-display text-3xl md:text-5xl font-bold mt-3 text-pink-brand">Come Visit Us</h2>
-      <p class="text-gray-400 mt-2 text-sm">Right on Jericho Turnpike — easy to find, hard to leave.</p>
+      <p class="text-gray-400 mt-2 text-sm">Right on Claypitts Road — easy to find, hard to leave.</p>
     </div>
 
     <div class="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-10 items-start">
       <!-- map + address -->
       <div class="reveal w-full">
-        <div class="map-ph w-full mb-5">
-          <div style="font-size:3rem;margin-bottom:.75rem;">📍</div>
-          <p class="font-display text-pink-brand font-bold text-base md:text-lg">1916 Jericho Turnpike</p>
-          <p class="text-pink-deep/60 text-sm">East Northport, NY 11731</p>
-          <a href="https://maps.google.com/?q=1916+Jericho+Turnpike+East+Northport+NY" target="_blank" class="mt-3 inline-block text-xs text-pink-brand border border-pink-brand/30 rounded-full px-4 py-2 hover:bg-pink-brand hover:text-white transition-all">Open in Google Maps ↗</a>
-          <p class="text-xs text-gray-400 mt-2">Replace with live Google Maps embed</p>
+        <!-- Google Maps embed -->
+        <div class="map-embed mb-5" style="height:280px;">
+          <iframe
+            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&q=307+Claypitts+Rd,East+Northport,NY+11731"
+            width="100%" height="100%" style="border:0;display:block;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
         </div>
         <div class="bg-white rounded-2xl p-5 border border-pink-brand/10 shadow-sm">
           <div class="flex items-start gap-4">
             <div style="font-size:1.8rem;">📬</div>
             <div>
               <p class="font-display font-bold text-pink-brand text-base">BumbleBear</p>
-              <p class="text-gray-500 text-sm mt-1">1916 Jericho Turnpike<br>East Northport, NY 11731</p>
-              <a href="tel:+15165551234" class="text-pink-brand text-sm font-medium mt-2 block">📞 (516) 555-1234</a>
+              <p class="text-gray-500 text-sm mt-1">307 Claypitts Road<br>East Northport, NY 11731</p>
+              <a href="tel:+10000000000" class="text-pink-brand text-sm font-medium mt-2 block">📞 (000) 000-0000</a>
             </div>
           </div>
         </div>
@@ -718,13 +698,13 @@
           <h3 class="font-display text-xl md:text-2xl font-bold text-pink-brand mb-5">🕐 Store Hours</h3>
           <table class="hours-table w-full text-sm">
             <tbody>
-              <tr><td class="text-gray-700 rounded-l">Monday</td><td class="text-right text-pink-brand font-semibold rounded-r">10 AM – 7 PM</td></tr>
-              <tr><td class="text-gray-700">Tuesday</td><td class="text-right text-pink-brand font-semibold">10 AM – 7 PM</td></tr>
-              <tr><td class="text-gray-700">Wednesday</td><td class="text-right text-pink-brand font-semibold">10 AM – 7 PM</td></tr>
+              <tr><td class="text-gray-700 rounded-l">Monday</td><td class="text-right text-pink-brand font-semibold rounded-r">10 AM – 8 PM</td></tr>
+              <tr><td class="text-gray-700">Tuesday</td><td class="text-right text-pink-brand font-semibold">10 AM – 8 PM</td></tr>
+              <tr><td class="text-gray-700">Wednesday</td><td class="text-right text-pink-brand font-semibold">10 AM – 8 PM</td></tr>
               <tr><td class="text-gray-700">Thursday</td><td class="text-right text-pink-brand font-semibold">10 AM – 8 PM</td></tr>
               <tr><td class="text-gray-700">Friday</td><td class="text-right text-pink-brand font-semibold">10 AM – 8 PM</td></tr>
-              <tr><td class="text-gray-700">Saturday</td><td class="text-right font-bold" style="color:#d95fa3;">10 AM – 9 PM</td></tr>
-              <tr><td class="text-gray-700">Sunday</td><td class="text-right font-bold" style="color:#d95fa3;">11 AM – 6 PM</td></tr>
+              <tr><td class="text-gray-700">Saturday</td><td class="text-right font-bold" style="color:#d95fa3;">10 AM – 8 PM</td></tr>
+              <tr><td class="text-gray-700">Sunday</td><td class="text-right font-bold" style="color:#d95fa3;">10 AM – 8 PM</td></tr>
             </tbody>
           </table>
           <div class="mt-5 p-4 rounded-xl flex items-start gap-3" style="background:rgba(240,137,196,.1);">
@@ -744,19 +724,19 @@
   <div class="stripes"></div>
   <div class="sticker sticker-white fa" style="--rot:-7deg;top:-18px;right:6%;z-index:10;text-align:center;padding:.75rem 1.1rem;">
     <div class="font-script text-lg" style="color:#f089c4;">BumbleBear</div>
-    <div style="font-size:.58rem;color:#bbb;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;">Est. 2020 🐻</div>
+    <div style="font-size:.58rem;color:#bbb;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px;">Est. 2025 🐻</div>
   </div>
 
   <div class="max-w-2xl mx-auto text-center relative z-10">
     <div class="mb-6">
       <div class="font-script text-4xl md:text-5xl text-white mb-2">BumbleBear 🐻</div>
-      <p class="text-white/65 text-sm">1916 Jericho Turnpike · East Northport, NY 11731</p>
+      <p class="text-white/65 text-sm">307 Claypitts Road · East Northport, NY 11731</p>
     </div>
     <div class="bg-white/15 backdrop-blur-sm border border-white/25 rounded-2xl p-6 md:p-8 mb-8">
       <h3 class="font-display text-2xl md:text-4xl font-bold text-white mb-3">Come Visit the Bear Den 🏪</h3>
       <p class="text-white/70 mb-6 text-sm max-w-sm mx-auto">Stop by any day of the week and discover what's new. Walk-ins always welcome.</p>
       <div class="btn-row justify-center">
-        <a href="tel:+15165551234" class="cta-btn">📞 Call (516) 555-1234</a>
+        <a href="tel:+10000000000" class="cta-btn">📞 Call (000) 000-0000</a>
         <a href="#location" class="cta-outline">📍 Get Directions</a>
       </div>
     </div>
@@ -785,7 +765,6 @@
 </style>
 
 <script>
-  // ── coming soon popup ─────────────────────
   const icons = { Instagram:'📸', TikTok:'🎵', Facebook:'💙' };
   function showComingSoon(e, platform) {
     e.preventDefault();
@@ -793,10 +772,9 @@
     document.getElementById('cs-icon').textContent = icons[platform] || '📱';
     const overlay = document.getElementById('cs-overlay');
     overlay.style.display = 'flex';
-    // re-trigger animation
     const card = overlay.querySelector('div');
     card.style.animation = 'none';
-    card.offsetHeight; // reflow
+    card.offsetHeight;
     card.style.animation = 'popIn .35s cubic-bezier(.34,1.56,.64,1)';
   }
   function closeComingSoon() {
@@ -804,7 +782,6 @@
   }
   document.addEventListener('keydown', e => { if(e.key==='Escape') closeComingSoon(); });
 
-  // ── hamburger ──────────────────────────────
   const ham  = document.getElementById('ham');
   const menu = document.getElementById('mobile-menu');
   ham.addEventListener('click', () => {
@@ -815,18 +792,15 @@
     ham.classList.remove('active');
     menu.classList.remove('open');
   }
-  // close on outside click
   document.addEventListener('click', e => {
     if (!ham.contains(e.target) && !menu.contains(e.target)) closeMenu();
   });
 
-  // ── scroll reveal ──────────────────────────
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // ── GSAP hero entrance ─────────────────────
   window.addEventListener('load', () => {
     const tl = gsap.timeline({ defaults:{ ease:'power3.out' } });
     tl.from('nav',               { y:-50, opacity:0, duration:.6 })
